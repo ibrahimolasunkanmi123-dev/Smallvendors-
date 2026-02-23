@@ -161,6 +161,17 @@ class StorageService {
     await prefs.setString('buyers', jsonEncode(data));
   }
 
+  Future<void> saveBuyer(Buyer buyer) async {
+    final buyers = await getBuyers();
+    final existingIndex = buyers.indexWhere((b) => b.id == buyer.id);
+    if (existingIndex >= 0) {
+      buyers[existingIndex] = buyer;
+    } else {
+      buyers.add(buyer);
+    }
+    await saveBuyers(buyers);
+  }
+
   Future<void> removeData(String key) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(key);

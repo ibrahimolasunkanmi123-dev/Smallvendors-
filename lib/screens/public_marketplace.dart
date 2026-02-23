@@ -4,7 +4,7 @@ import '../models/product.dart';
 import '../services/storage_service.dart';
 import '../widgets/safe_image.dart';
 import 'vendor_catalog_screen.dart';
-import 'login_screen.dart';
+import 'product_detail_screen.dart';
 
 class PublicMarketplace extends StatefulWidget {
   const PublicMarketplace({super.key});
@@ -43,12 +43,10 @@ class _PublicMarketplaceState extends State<PublicMarketplace> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         actions: [
-          TextButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const LoginScreen()),
-            ),
-            child: const Text('Login', style: TextStyle(color: Colors.white)),
+          TextButton.icon(
+            onPressed: () => Navigator.pushNamed(context, '/appwrite-auth'),
+            icon: const Icon(Icons.login, color: Colors.white),
+            label: const Text('Login', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

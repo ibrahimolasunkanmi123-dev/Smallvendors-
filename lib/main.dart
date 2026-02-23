@@ -3,13 +3,26 @@ import 'package:provider/provider.dart';
 import 'services/theme_service.dart';
 import 'services/supabase_service.dart';
 import 'services/sample_data_service.dart';
+import 'services/appwrite_service.dart';
 import 'screens/splash_screen.dart';
+import 'screens/public_marketplace.dart';
+import 'screens/onboarding_screen.dart';
+import 'screens/unified_auth_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/signup_screen.dart';
+import 'screens/appwrite_auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await SupabaseService.initialize();
-  await SampleDataService.initializeSampleData();
+  try {
+    await SupabaseService.initialize();
+    await SampleDataService.initializeSampleData();
+    AppwriteService().init();
+  } catch (e) {
+    print('Initialization error: $e');
+  }
+  
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeService(),
@@ -31,11 +44,17 @@ class SmallVendorsApp extends StatelessWidget {
           darkTheme: themeService.darkTheme,
           themeMode: themeService.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: const SplashScreen(),
+          routes: {
+            '/marketplace': (context) => const PublicMarketplace(),
+            '/onboarding': (context) => const OnboardingScreen(),
+            '/auth': (context) => const UnifiedAuthScreen(),
+            '/login': (context) => const LoginScreen(),
+            '/signup': (context) => const SignupScreen(),
+            '/appwrite-auth': (context) => AppwriteAuthScreen(),
+          },
           debugShowCheckedModeBanner: false,
         );
       },
     );
   }
 }
-
-

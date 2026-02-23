@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 import '../services/supabase_service.dart';
+import '../services/appwrite_service.dart';
 import 'buyer_dashboard.dart';
+import 'vendor_dashboard.dart';
 import 'onboarding_screen.dart';
 import 'public_marketplace.dart';
 
@@ -18,6 +20,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final _storage = StorageService();
+  final _appwrite = AppwriteService();
 
   @override
   void initState() {
@@ -29,42 +32,42 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 2)); // Show splash for 2 seconds
     
     try {
-      // Check Supabase authentication state
-      if (SupabaseService.isLoggedIn) {
-        final user = SupabaseService.currentUser;
-        if (user != null) {
-          final buyer = await SupabaseService.getBuyerById(user.id);
-          if (buyer != null && mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => BuyerDashboard(buyer: buyer)),
-            );
-            return;
+      // Initialize Appwrite
+      _appwrite.init();
+      
+      // Check Appwrite authentication first
+      final appwriteUser = await _appwrite.getCurrentUser();
+      if (appwriteUser != null) {
+        final profile = await _appwrite.getUserProfile(appwriteUser.$id);
+        if (profile != null && mounted) {
+          if (profile['userType'] == 'vendor') {
+            final vendor = await _appwrite.getVendorProfile(appwriteUser.$id);
+            if (vendor != null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => VendorDashboard(vendor: vendor)),
+              );
+              return;
+            }
+          } else {
+            final buyer = await _appwrite.getBuyerProfile(appwriteUser.$id);
+            if (buyer != null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => BuyerDashboard(buyer: buyer)),
+              );
+              return;
+            }
           }
         }
       }
-      
-      // Check if onboarding is completed
-      final onboardingCompleted = await _storage.getData('onboarding_completed');
-      if (onboardingCompleted != 'true') {
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-          );
-          return;
-        }
-      }
     } catch (e) {
-      // If any error occurs, continue to public marketplace
+      print('Authentication check error: $e');
     }
     
-    // Default to public marketplace to showcase products immediately
+    // If no user is logged in, go to authentication screen
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const PublicMarketplace()),
-      );
+      Navigator.pushReplacementNamed(context, '/appwrite-auth');
     }
   }
 

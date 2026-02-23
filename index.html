@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmallVendors - Empowering Local Businesses</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s;
+        }
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        .features {
+            padding: 80px 20px;
+            background: var(--light);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        .feature-card {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+        }
+        .stats {
+            background: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+        .stat-item h3 {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .cta-section {
+            background: var(--secondary);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">🏪 SmallVendors</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="login.html" class="btn btn-primary" style="padding: 8px 20px;">Login</a>
+                <a href="signup.html" class="btn btn-secondary" style="padding: 8px 20px;">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Empowering Local Businesses</h1>
+            <p>Connect with small vendors in your community. Buy local, support local.</p>
+            <a href="signup.html" class="btn btn-secondary" style="font-size: 18px; padding: 16px 40px;">Get Started Free</a>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 36px; margin-bottom: 20px;">Why Choose SmallVendors?</h2>
+            <p style="text-align: center; color: var(--gray); font-size: 18px;">Everything you need to grow your business or find local products</p>
+            
+            <div class="features-grid">
+                <div class="card feature-card">
+                    <div class="feature-icon">🏪</div>
+                    <h3 style="margin-bottom: 15px;">Vendor Profiles</h3>
+                    <p style="color: var(--gray);">Create stunning profiles to showcase your business and products</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3 style="margin-bottom: 15px;">Product Listings</h3>
+                    <p style="color: var(--gray);">List unlimited products with photos, descriptions, and pricing</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3 style="margin-bottom: 15px;">Direct Messaging</h3>
+                    <p style="color: var(--gray);">Chat directly with vendors and customers in real-time</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <h3 style="margin-bottom: 15px;">Reviews & Ratings</h3>
+                    <p style="color: var(--gray);">Build trust with authentic customer reviews and ratings</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">📍</div>
+                    <h3 style="margin-bottom: 15px;">Location Based</h3>
+                    <p style="color: var(--gray);">Find vendors near you and support your local community</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 style="margin-bottom: 15px;">Analytics</h3>
+                    <p style="color: var(--gray);">Track your business performance with detailed insights</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <h2 style="font-size: 36px; margin-bottom: 20px;">Growing Community</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>1,000+</h3>
+                    <p style="color: var(--gray);">Active Vendors</p>
+                </div>
+                <div class="stat-item">
+                    <h3>5,000+</h3>
+                    <p style="color: var(--gray);">Products Listed</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10,000+</h3>
+                    <p style="color: var(--gray);">Happy Customers</p>
+                </div>
+                <div class="stat-item">
+                    <h3>50+</h3>
+                    <p style="color: var(--gray);">Cities Covered</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2 style="font-size: 36px; margin-bottom: 20px;">Ready to Get Started?</h2>
+            <p style="font-size: 18px; margin-bottom: 30px; opacity: 0.9;">Join thousands of vendors and customers today</p>
+            <a href="signup.html" class="btn" style="background: white; color: var(--secondary); font-size: 18px; padding: 16px 40px;">Create Free Account</a>
+        </div>
+    </section>
+
+    <footer style="background: var(--dark); color: white; padding: 40px 20px; text-align: center;">
+        <div class="container">
+            <p>&copy; 2024 SmallVendors. All rights reserved.</p>
+            <p style="margin-top: 10px; opacity: 0.7;">Empowering local businesses, one vendor at a time.</p>
+        </div>
+    </footer>
+</body>
+</html>

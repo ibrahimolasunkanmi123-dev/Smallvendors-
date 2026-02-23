@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - SmallVendors</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .marketplace-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 30px 0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .filters select, .filters input {
+            flex: 1;
+            min-width: 200px;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        .product-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        .product-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        .vendor-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">🏪 SmallVendors</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="login.html" class="btn btn-primary" style="padding: 8px 20px;">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="marketplace-header">
+        <div class="container">
+            <h1 style="font-size: 42px; margin-bottom: 15px;">Discover Local Products</h1>
+            <p style="font-size: 18px; opacity: 0.9;">Browse thousands of products from local vendors</p>
+        </div>
+    </section>
+
+    <div class="container" style="padding: 40px 20px;">
+        <div class="filters">
+            <input type="text" placeholder="Search products..." id="searchInput">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="food">Food & Beverages</option>
+                <option value="fashion">Fashion</option>
+                <option value="electronics">Electronics</option>
+                <option value="home">Home & Garden</option>
+                <option value="beauty">Beauty & Health</option>
+            </select>
+            <select id="priceFilter">
+                <option value="">All Prices</option>
+                <option value="low">Under $50</option>
+                <option value="mid">$50 - $200</option>
+                <option value="high">Over $200</option>
+            </select>
+            <button class="btn btn-primary">Apply Filters</button>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <div class="card product-card">
+                <div class="product-image">🍕</div>
+                <h3>Artisan Pizza</h3>
+                <p style="color: var(--gray); font-size: 14px;">Fresh handmade pizza with organic ingredients</p>
+                <div class="product-price">$15.99</div>
+                <span class="vendor-badge">Joe's Pizzeria</span>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            </div>
+
+            <div class="card product-card">
+                <div class="product-image">👕</div>
+                <h3>Cotton T-Shirt</h3>
+                <p style="color: var(--gray); font-size: 14px;">Premium quality cotton, various colors</p>
+                <div class="product-price">$24.99</div>
+                <span class="vendor-badge">Fashion Hub</span>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            </div>
+
+            <div class="card product-card">
+                <div class="product-image">📱</div>
+                <h3>Phone Accessories</h3>
+                <p style="color: var(--gray); font-size: 14px;">Cases, chargers, and screen protectors</p>
+                <div class="product-price">$12.99</div>
+                <span class="vendor-badge">Tech Store</span>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            </div>
+
+            <div class="card product-card">
+                <div class="product-image">🌿</div>
+                <h3>Indoor Plants</h3>
+                <p style="color: var(--gray); font-size: 14px;">Beautiful plants for your home or office</p>
+                <div class="product-price">$18.50</div>
+                <span class="vendor-badge">Green Garden</span>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            </div>
+
+            <div class="card product-card">
+                <div class="product-image">💄</div>
+                <h3>Organic Cosmetics</h3>
+                <p style="color: var(--gray); font-size: 14px;">Natural beauty products, cruelty-free</p>
+                <div class="product-price">$32.00</div>
+                <span class="vendor-badge">Beauty Bliss</span>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            </div>
+
+            <div class="card product-card">
+                <div class="product-image">☕</div>
+                <h3>Coffee Beans</h3>
+                <p style="color: var(--gray); font-size: 14px;">Freshly roasted premium coffee beans</p>
+                <div class="product-price">$22.99</div>
+                <span class="vendor-badge">Coffee Corner</span>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            </div>
+
+            <div class="card product-card">
+                <div class="product-image">🎨</div>
+                <h3>Handmade Crafts</h3>
+                <p style="color: var(--gray); font-size: 14px;">Unique handcrafted decorative items</p>
+                <div class="product-price">$45.00</div>
+                <span class="vendor-badge">Artisan Corner</span>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            </div>
+
+            <div class="card product-card">
+                <div class="product-image">🍰</div>
+                <h3>Custom Cakes</h3>
+                <p style="color: var(--gray); font-size: 14px;">Delicious cakes for any occasion</p>
+                <div class="product-price">$35.99</div>
+                <span class="vendor-badge">Sweet Treats</span>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: var(--dark); color: white; padding: 40px 20px; text-align: center; margin-top: 60px;">
+        <div class="container">
+            <p>&copy; 2024 SmallVendors. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
