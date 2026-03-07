@@ -55,6 +55,20 @@
                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
                            placeholder="Create a password">
                 </div>
+
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone (Optional)</label>
+                    <input id="phone" name="phone" type="text"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Enter your phone number">
+                </div>
+
+                <div>
+                    <label for="address" class="block text-sm font-medium text-gray-700">Address (Optional)</label>
+                    <input id="address" name="address" type="text"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Enter your address">
+                </div>
                 
                 <div>
                     <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
@@ -104,6 +118,8 @@
             const userType = document.getElementById('userType').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
             const terms = document.getElementById('terms').checked;
             const messageDiv = document.getElementById('message');
             
@@ -134,7 +150,7 @@
                 const normalizedUserType = userType === 'vendor' ? 'vendor' : 'buyer';
                 const user = await account.create(ID.unique(), email, password, name);
                 await account.createEmailPasswordSession(email, password);
-                await databases.createDocument(
+                const userDoc = await databases.createDocument(
                     DATABASE_ID,
                     USERS_COLLECTION_ID,
                     user.$id,
@@ -142,18 +158,25 @@
                         name,
                         email,
                         userType: normalizedUserType,
-                        phone: null,
-                        address: null,
+                        phone: phone || null,
+                        address: address || null,
                         createdAt: new Date().toISOString(),
                         lastLogin: new Date().toISOString()
-                    }
+                    },
+                    [
+                        `read("user:${user.$id}")`,
+                        `update("user:${user.$id}")`,
+                        `delete("user:${user.$id}")`
+                    ]
                 );
 
-                showMessage('Account created successfully! Redirecting to home...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
+                if (!userDoc || !userDoc.$id) {
+                    throw new Error('Failed to save profile in users table.');
+                }
+
+                window.location.replace('index.html');
             } catch (error) {
+                console.error('Signup flow error:', error);
                 showMessage(error.message || 'Registration failed', 'error');
             }
         });
