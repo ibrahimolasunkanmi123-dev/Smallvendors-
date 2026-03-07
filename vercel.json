@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "*.html": {
-      "runtime": "@vercel/static"
-    }
-  },
   "rewrites": [
     {
       "source": "/",
