@@ -70,6 +70,7 @@ class AppwriteService {
       'email': email,
       'userType': userType,
       'createdAt': DateTime.now().toIso8601String(),
+      'lastLogin': DateTime.now().toIso8601String(),
     };
 
     if (phone != null && phone.trim().isNotEmpty) {

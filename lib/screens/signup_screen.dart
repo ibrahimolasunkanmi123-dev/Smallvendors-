@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../services/appwrite_service.dart';
-import 'enhanced_profile_setup_screen.dart';
 import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -79,12 +78,7 @@ class _SignupScreenState extends State<SignupScreen> with TickerProviderStateMix
       );
       
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const EnhancedProfileSetupScreen(),
-          ),
-        );
+        Navigator.pushReplacementNamed(context, '/marketplace');
       }
     } catch (e) {
       print('Signup error: $e');

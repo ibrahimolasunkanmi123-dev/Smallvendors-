@@ -44,7 +44,7 @@
                     <select id="userType" name="userType" required 
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                         <option value="">Select account type</option>
-                        <option value="customer">Customer</option>
+                        <option value="buyer">Customer</option>
                         <option value="vendor">Small Business Vendor</option>
                     </select>
                 </div>
@@ -87,11 +87,14 @@
 
     <script>
         // Initialize Appwrite
-        const { Client, Account, ID } = Appwrite;
+        const { Client, Account, Databases, ID } = Appwrite;
         const client = new Client()
             .setEndpoint('https://nyc.cloud.appwrite.io/v1')
             .setProject('699b21ef002b28b002d7');
         const account = new Account(client);
+        const databases = new Databases(client);
+        const DATABASE_ID = 'smallvendors-db';
+        const USERS_COLLECTION_ID = 'users';
 
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -128,10 +131,27 @@
             showMessage('Creating account...', 'info');
             
             try {
+                const normalizedUserType = userType === 'vendor' ? 'vendor' : 'buyer';
                 const user = await account.create(ID.unique(), email, password, name);
-                showMessage('Account created successfully! Redirecting to login...', 'success');
+                await account.createEmailPasswordSession(email, password);
+                await databases.createDocument(
+                    DATABASE_ID,
+                    USERS_COLLECTION_ID,
+                    user.$id,
+                    {
+                        name,
+                        email,
+                        userType: normalizedUserType,
+                        phone: null,
+                        address: null,
+                        createdAt: new Date().toISOString(),
+                        lastLogin: new Date().toISOString()
+                    }
+                );
+
+                showMessage('Account created successfully! Redirecting to home...', 'success');
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = 'index.html';
                 }, 2000);
             } catch (error) {
                 showMessage(error.message || 'Registration failed', 'error');
