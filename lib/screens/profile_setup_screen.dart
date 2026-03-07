@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../services/supabase_service.dart';
+import '../services/storage_service.dart';
 import '../services/location_service.dart';
 import '../models/buyer.dart';
 import 'buyer_dashboard.dart';
@@ -62,11 +62,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       location: _location,
     );
     
-    final savedBuyer = await SupabaseService.saveBuyer(buyer);
+    await StorageService().saveBuyer(buyer);
+    final savedBuyer = buyer;
     
     setState(() => _isLoading = false);
     
-    if (savedBuyer != null && mounted) {
+    if (mounted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => BuyerDashboard(buyer: savedBuyer)),

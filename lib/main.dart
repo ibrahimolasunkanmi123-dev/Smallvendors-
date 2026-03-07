@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/theme_service.dart';
-import 'services/supabase_service.dart';
 import 'services/sample_data_service.dart';
 import 'services/appwrite_service.dart';
 import 'screens/splash_screen.dart';
@@ -21,7 +20,6 @@ void main() async {
     print('Appwrite initialized successfully');
     
     // Initialize other services
-    await SupabaseService.initialize();
     await SampleDataService.initializeSampleData();
   } catch (e) {
     print('Initialization error: $e');

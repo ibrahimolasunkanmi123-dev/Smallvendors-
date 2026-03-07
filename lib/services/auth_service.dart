@@ -1,122 +1,125 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:async';
 
-import 'storage_service.dart';
 import '../models/buyer.dart';
+import 'appwrite_service.dart';
+import 'storage_service.dart';
+
+class AuthUser {
+  final String id;
+  final String? email;
+  final DateTime? emailConfirmedAt;
+
+  const AuthUser({
+    required this.id,
+    this.email,
+    this.emailConfirmedAt,
+  });
+}
+
+class AuthResponse {
+  final AuthUser? user;
+  final String? accessToken;
+
+  const AuthResponse({this.user, this.accessToken});
+}
+
+class AuthState {
+  final AuthUser? user;
+  final String event;
+
+  const AuthState({required this.user, required this.event});
+}
 
 class AuthService {
-  final SupabaseClient _supabase = Supabase.instance.client;
+  final AppwriteService _appwrite = AppwriteService();
   final StorageService _storage = StorageService();
+  final StreamController<AuthState> _authStateController =
+      StreamController<AuthState>.broadcast();
 
-  // Get current user
-  User? get currentUser => _supabase.auth.currentUser;
+  AuthUser? _currentUser;
 
-  // Check if user is signed in
-  bool get isSignedIn => currentUser != null;
-
-  // Sign up with email - disable email confirmation for testing
-  Future<AuthResponse> signUpWithEmail(String email, String password) async {
-    try {
-      print('Attempting to sign up user: $email');
-      
-      // Sign up without email confirmation
-      final response = await _supabase.auth.signUp(
-        email: email,
-        password: password,
-        data: {
-          'email_confirm': false, // Skip email confirmation
-        },
-      );
-      
-      print('Supabase signup response: ${response.user?.id}');
-      print('Supabase signup session: ${response.session?.accessToken}');
-      
-      if (response.user == null) {
-        if (response.session == null) {
-          throw Exception('Signup failed - check Supabase email confirmation settings');
-        }
-        throw Exception('Failed to create user account - no user returned');
-      }
-      
-      // Manually create profile if trigger doesn't work
-      try {
-        await _supabase.from('profiles').insert({
-          'id': response.user!.id,
-          'email': email,
-          'user_type': 'buyer',
-          'created_at': DateTime.now().toIso8601String(),
-          'updated_at': DateTime.now().toIso8601String(),
-        });
-        print('Profile created manually');
-      } catch (profileError) {
-        print('Profile creation error (might already exist): $profileError');
-      }
-      
-      return response;
-    } catch (e) {
-      print('Signup error details: $e');
-      rethrow;
-    }
+  AuthService() {
+    _appwrite.init();
   }
 
-  // Sign in with email and password
-  Future<AuthResponse> signInWithEmail(String email, String password) async {
-    try {
-      print('Attempting to sign in user: $email');
-      
-      final response = await _supabase.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
-      
-      print('Sign in response: ${response.user?.id}');
-      
-      if (response.user != null) {
-        // Save current user ID to local storage
-        await _storage.saveData('current_buyer', response.user!.id);
-      }
-      
-      return response;
-    } catch (e) {
-      print('Sign in error: $e');
-      rethrow;
-    }
-  }
-
-  // Resend email verification link
-  Future<void> resendEmailVerification(String email) async {
-    await _supabase.auth.resend(
-      type: OtpType.signup,
-      email: email,
+  AuthUser _mapUser(dynamic user) {
+    final isVerified = (user.emailVerification as bool?) ?? false;
+    return AuthUser(
+      id: user.$id as String,
+      email: user.email as String?,
+      emailConfirmedAt: isVerified ? DateTime.now() : null,
     );
   }
 
-  // Create user profile after authentication
+  AuthUser? get currentUser => _currentUser;
+
+  bool get isSignedIn => currentUser != null;
+
+  Future<AuthResponse> signUpWithEmail(String email, String password) async {
+    try {
+      final displayName = email.split('@').first;
+      final createdUser = await _appwrite.signUp(email, password, displayName);
+
+      try {
+        await _appwrite.signIn(email, password);
+      } catch (_) {
+        // Session may already exist or signup policy may block auto sign-in.
+      }
+
+      _currentUser = _mapUser(createdUser);
+      _authStateController.add(AuthState(user: _currentUser, event: 'signed_up'));
+
+      return AuthResponse(user: _currentUser);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<AuthResponse> signInWithEmail(String email, String password) async {
+    try {
+      final session = await _appwrite.signIn(email, password);
+      final user = await _appwrite.getCurrentUser();
+
+      if (user != null) {
+        _currentUser = _mapUser(user);
+        await _storage.saveData('current_buyer', user.$id);
+      }
+
+      _authStateController.add(AuthState(user: _currentUser, event: 'signed_in'));
+      return AuthResponse(user: _currentUser, accessToken: session.$id);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> resendEmailVerification(String email) async {
+    await refreshSession();
+    if (_currentUser == null) {
+      throw Exception('Please sign in before requesting verification email.');
+    }
+
+    await _appwrite.account.createVerification(
+      url: 'https://smallvendors.vercel.app/',
+    );
+  }
+
   Future<Buyer> createUserProfile({
     required String name,
     required String email,
     String? profileImage,
     String? location,
   }) async {
+    await refreshSession();
     final user = currentUser;
     if (user == null) throw Exception('No authenticated user');
 
-    print('Creating profile for user: ${user.id}');
-
-    try {
-      // Update profile in Supabase
-      final updateResult = await _supabase.from('profiles').update({
-        'name': name,
-        'profile_image': profileImage,
-        'location': location ?? 'Location not set',
-        'user_type': 'buyer',
-        'updated_at': DateTime.now().toIso8601String(),
-      }).eq('id', user.id).select();
-      
-      print('Profile update result: $updateResult');
-    } catch (e) {
-      print('Error updating profile in Supabase: $e');
-      // Continue anyway - we'll save locally
-    }
+    await _appwrite.createUserProfile(
+      userId: user.id,
+      name: name,
+      email: email,
+      userType: 'buyer',
+      address: location,
+    );
 
     final buyer = Buyer(
       id: user.id,
@@ -126,60 +129,53 @@ class AuthService {
       location: location ?? 'Location not set',
     );
 
-    // Save to local storage as backup
-    try {
-      final buyers = await _storage.getBuyers();
-      buyers.removeWhere((b) => b.id == buyer.id);
-      buyers.add(buyer);
-      await _storage.saveBuyers(buyers);
-      await _storage.saveData('current_buyer', user.id);
-      print('Saved buyer to local storage: ${buyer.id}');
-    } catch (e) {
-      print('Error saving to local storage: $e');
-    }
+    final buyers = await _storage.getBuyers();
+    buyers.removeWhere((b) => b.id == buyer.id);
+    buyers.add(buyer);
+    await _storage.saveBuyers(buyers);
+    await _storage.saveData('current_buyer', buyer.id);
 
+    _authStateController.add(AuthState(user: _currentUser, event: 'profile_updated'));
     return buyer;
   }
 
-  // Sign out
   Future<void> signOut() async {
-    await _supabase.auth.signOut();
+    await _appwrite.signOut();
     await _storage.removeData('current_buyer');
+    _currentUser = null;
+    _authStateController.add(const AuthState(user: null, event: 'signed_out'));
   }
 
-  // Check if email is verified
   bool get isEmailVerified => currentUser?.emailConfirmedAt != null;
 
-  // Get user profile from Supabase
   Future<Buyer?> getUserProfile() async {
+    await refreshSession();
     final user = currentUser;
     if (user == null) return null;
 
     try {
-      final response = await _supabase
-          .from('profiles')
-          .select()
-          .eq('id', user.id)
-          .single();
-
+      final profile = await _appwrite.getUserProfile(user.id);
+      if (profile == null) return null;
       return Buyer(
-        id: response['id'],
-        name: response['name'] ?? '',
-        email: response['email'] ?? user.email ?? '',
-        profileImage: response['profile_image'],
-        location: response['location'] ?? 'Location not set',
+        id: user.id,
+        name: (profile['name'] ?? '').toString(),
+        email: (profile['email'] ?? user.email ?? '').toString(),
+        profileImage: profile['profileImage']?.toString(),
+        location: (profile['location'] ?? 'Location not set').toString(),
       );
-    } catch (e) {
-      print('Error fetching profile: $e');
+    } catch (_) {
       return null;
     }
   }
 
-  // Listen to auth state changes
-  Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
+  Stream<AuthState> get authStateChanges => _authStateController.stream;
 
-  // Refresh session to check verification status
   Future<void> refreshSession() async {
-    await _supabase.auth.refreshSession();
+    try {
+      final user = await _appwrite.getCurrentUser();
+      _currentUser = user == null ? null : _mapUser(user);
+    } catch (_) {
+      _currentUser = null;
+    }
   }
 }

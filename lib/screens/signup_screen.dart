@@ -119,7 +119,7 @@ class _SignupScreenState extends State<SignupScreen> with TickerProviderStateMix
     }
     
     if (lowerError.contains('email_confirm') || lowerError.contains('confirmation')) {
-      return 'Email confirmation required. Please check Supabase settings.';
+      return 'Email confirmation required. Please check your Appwrite settings.';
     }
     
     // Show the actual error for debugging

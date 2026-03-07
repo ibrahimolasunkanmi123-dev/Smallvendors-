@@ -6,7 +6,6 @@ import '../models/order.dart';
 import '../models/customer.dart';
 import '../models/review.dart';
 import '../models/buyer.dart';
-import 'supabase_service.dart';
 
 class StorageService {
   static const _vendorKey = 'vendor';
@@ -17,12 +16,17 @@ class StorageService {
   static const _reviewsKey = 'reviews';
 
   Future<void> saveVendor(Vendor vendor) async {
-    // Try Supabase first
-    await SupabaseService.saveVendor(vendor);
-    
-    // Always save locally as backup
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_vendorKey, jsonEncode(vendor.toJson()));
+
+    final vendors = await getVendors();
+    final index = vendors.indexWhere((v) => v.id == vendor.id);
+    if (index >= 0) {
+      vendors[index] = vendor;
+    } else {
+      vendors.add(vendor);
+    }
+    await saveVendors(vendors);
   }
 
   Future<Vendor?> getVendor() async {
@@ -32,11 +36,6 @@ class StorageService {
   }
 
   Future<List<Vendor>> getVendors() async {
-    // Try Supabase first
-    final supabaseVendors = await SupabaseService.getVendors();
-    if (supabaseVendors.isNotEmpty) return supabaseVendors;
-    
-    // Fallback to local storage
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getString('vendors');
     if (data == null) return [];
@@ -45,12 +44,6 @@ class StorageService {
   }
 
   Future<void> saveVendors(List<Vendor> vendors) async {
-    // Save to Supabase
-    for (final vendor in vendors) {
-      await SupabaseService.saveVendor(vendor);
-    }
-    
-    // Save locally as backup
     final prefs = await SharedPreferences.getInstance();
     final data = vendors.map((v) => v.toJson()).toList();
     await prefs.setString('vendors', jsonEncode(data));

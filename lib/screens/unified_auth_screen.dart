@@ -107,7 +107,7 @@ class _UnifiedAuthScreenState extends State<UnifiedAuthScreen> with TickerProvid
       }
     }
     
-    // Try Supabase authentication
+    // Try Appwrite authentication
     try {
       final response = await _authService.signInWithEmail(email, _passwordController.text);
       if (response.user != null) {

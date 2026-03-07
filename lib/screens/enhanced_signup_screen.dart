@@ -27,7 +27,7 @@ class _EnhancedSignupScreenState extends State<EnhancedSignupScreen> {
     setState(() => _isLoading = true);
     
     try {
-      // Send email verification link using Supabase
+      // Send email verification link using Appwrite
       await _authService.resendEmailVerification(_emailController.text);
       setState(() => _isEmailSent = true);
       ScaffoldMessenger.of(context).showSnackBar(
