@@ -74,6 +74,8 @@
             .setEndpoint('https://nyc.cloud.appwrite.io/v1')
             .setProject('699b21ef002b28b002d7');
         const account = new Account(client);
+        const BUILD_VERSION = '2026-03-07-signup-fix-2';
+        console.log('SmallVendors login build:', BUILD_VERSION);
 
         async function createSession(email, password) {
             if (typeof account.createEmailPasswordSession === 'function') {
