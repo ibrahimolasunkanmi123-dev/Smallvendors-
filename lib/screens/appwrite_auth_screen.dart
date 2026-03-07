@@ -4,6 +4,8 @@ import 'buyer_dashboard.dart';
 import 'vendor_dashboard.dart';
 
 class AppwriteAuthScreen extends StatefulWidget {
+  const AppwriteAuthScreen({super.key});
+
   @override
   _AppwriteAuthScreenState createState() => _AppwriteAuthScreenState();
 }
@@ -44,17 +46,29 @@ class _AppwriteAuthScreenState extends State<AppwriteAuthScreen> {
   Future<void> _authenticate() async {
     if (!_formKey.currentState!.validate()) return;
     
+    print('Authentication started...');
     setState(() => _loading = true);
     try {
       if (_isSignUp) {
+        print('Creating new account...');
         // Create account
         final user = await _appwrite.signUp(
           _emailController.text.trim(),
           _passwordController.text,
           _nameController.text.trim(),
         );
+        print('User created: ${user.$id}');
+
+        // Appwrite account creation does not automatically create a session.
+        // Sign in first so database writes for profile creation are authorized.
+        await _appwrite.signIn(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
+        print('Session created after signup');
         
         // Create user profile
+        print('Creating user profile...');
         await _appwrite.createUserProfile(
           userId: user.$id,
           name: _nameController.text.trim(),
@@ -65,47 +79,149 @@ class _AppwriteAuthScreenState extends State<AppwriteAuthScreen> {
           businessName: _userType == 'vendor' ? _businessNameController.text.trim() : null,
           businessDescription: _userType == 'vendor' ? _businessDescController.text.trim() : null,
         );
+        print('Profile created successfully');
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account created successfully! Please sign in.')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Account created successfully! Please sign in.')),
+          );
+        }
         
-        setState(() => _isSignUp = false);
+        if (mounted) {
+          setState(() => _isSignUp = false);
+        }
       } else {
+        print('Signing in...');
         // Sign in
         await _appwrite.signIn(_emailController.text.trim(), _passwordController.text);
+        print('Sign in successful');
         
         // Get user profile and navigate
         final user = await _appwrite.getCurrentUser();
+        print('Current user: ${user?.$id}');
         if (user != null) {
-          final profile = await _appwrite.getUserProfile(user.$id);
-          if (profile != null) {
-            if (profile['userType'] == 'vendor') {
-              final vendor = await _appwrite.getVendorProfile(user.$id);
-              if (vendor != null && mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => VendorDashboard(vendor: vendor)),
-                );
-              }
-            } else {
-              final buyer = await _appwrite.getBuyerProfile(user.$id);
-              if (buyer != null && mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => BuyerDashboard(buyer: buyer)),
-                );
-              }
+          final profile = await _appwrite.ensureUserProfiles(
+            user: user,
+            defaultUserType: 'buyer',
+          );
+          print('User profile: $profile');
+          if (profile['userType'] == 'vendor') {
+            final vendor = await _appwrite.getVendorProfile(user.$id);
+            if (vendor != null && mounted) {
+              print('Navigating to vendor dashboard');
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => VendorDashboard(vendor: vendor)),
+              );
+            } else if (mounted) {
+              Navigator.pushReplacementNamed(context, '/marketplace');
+            }
+          } else {
+            final buyer = await _appwrite.getBuyerProfile(user.$id);
+            if (buyer != null && mounted) {
+              print('Navigating to buyer dashboard');
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => BuyerDashboard(buyer: buyer)),
+              );
+            } else if (mounted) {
+              Navigator.pushReplacementNamed(context, '/marketplace');
             }
           }
+        } else {
+          throw Exception('Sign in failed. Please check your credentials and try again.');
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      print('Authentication error: $e');
+      final error = e.toString().toLowerCase();
+      if (_isSignUp && (error.contains('already') || error.contains('exists') || error.contains('409'))) {
+        if (mounted) {
+          setState(() => _isSignUp = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Account already exists. Please sign in with your existing credentials.')),
+          );
+          setState(() => _loading = false);
+        }
+        return;
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
     }
-    setState(() => _loading = false);
+    if (mounted) {
+      setState(() => _loading = false);
+    }
+    print('Authentication completed');
+  }
+
+  Future<void> _showForgotPasswordDialog() async {
+    final emailController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Password'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Enter your email address to receive a password reset link.'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (emailController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter your email')),
+                );
+                return;
+              }
+              
+              try {
+                await _appwrite.account.createRecovery(
+                  email: emailController.text.trim(),
+                  url: 'https://smallvendors.app/reset-password',
+                );
+                
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Password reset link sent! Check your email.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: ${e.toString()}')),
+                  );
+                }
+              }
+            },
+            child: const Text('Send Reset Link'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -357,11 +473,25 @@ class _AppwriteAuthScreenState extends State<AppwriteAuthScreen> {
               
               const SizedBox(height: 16),
               
+              // Forgot Password (only for sign in)
+              if (!_isSignUp)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => _showForgotPasswordDialog(),
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ),
+              
               // Toggle Sign Up/Sign In
               TextButton(
                 onPressed: () => setState(() {
                   _isSignUp = !_isSignUp;
                   _formKey.currentState?.reset();
+                  _passwordController.clear();
                 }),
                 child: Text(
                   _isSignUp 

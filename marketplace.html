@@ -4,184 +4,597 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketplace - SmallVendors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
-        .marketplace-header {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
+        :root {
+            --m-bg: #f8fafc;
+            --m-surface: #ffffff;
+            --m-line: #dbe4ef;
+            --m-ink: #0f172a;
+            --m-muted: #475569;
+            --m-brand: #0f766e;
+            --m-brand-dark: #115e59;
         }
-        .filters {
-            background: white;
-            padding: 20px;
+
+        body[data-theme="dusk"] {
+            --m-bg: #0f172a;
+            --m-surface: #17243d;
+            --m-line: #2b425f;
+            --m-ink: #e2e8f0;
+            --m-muted: #a2b1c5;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 8% 8%, rgba(20, 184, 166, 0.15) 0, transparent 30%),
+                radial-gradient(circle at 88% 0%, rgba(249, 115, 22, 0.1) 0, transparent 32%),
+                var(--m-bg);
+            color: var(--m-ink);
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        h1, h2, h3 {
+            font-family: "Sora", "Plus Jakarta Sans", sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .theme-btn {
+            border: 1px solid var(--m-line);
+            background: var(--m-surface);
+            color: var(--m-ink);
+            width: 42px;
+            height: 42px;
             border-radius: 12px;
-            margin: 30px 0;
+            cursor: pointer;
+        }
+
+        .marketplace-header {
+            padding: 64px 20px 38px;
+        }
+
+        .hero-block {
+            background: linear-gradient(145deg, #0f766e 0%, #155e75 55%, #0c4a6e 100%);
+            color: #f8fafc;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 20px 36px rgba(15, 23, 42, 0.2);
+        }
+
+        .hero-block h1 {
+            font-size: clamp(32px, 4.8vw, 52px);
+            line-height: 1.05;
+            max-width: 12ch;
+            margin-bottom: 10px;
+        }
+
+        .hero-tags {
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .hero-tag {
+            border: 1px solid rgba(255, 255, 255, 0.36);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .panel {
+            background: var(--m-surface);
+            border: 1px solid var(--m-line);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .controls-grid input,
+        .controls-grid select {
+            height: 42px;
+            background: color-mix(in srgb, var(--m-surface) 90%, #fff 10%);
+            color: var(--m-ink);
+            border-color: var(--m-line);
+        }
+
+        .toolbar {
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
             flex-wrap: wrap;
         }
-        .filters select, .filters input {
-            flex: 1;
-            min-width: 200px;
+
+        .result-text {
+            color: var(--m-muted);
+            font-size: 14px;
         }
+
+        .toolbar-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .quick-chip,
+        .view-toggle {
+            border: 1px solid var(--m-line);
+            border-radius: 999px;
+            background: var(--m-surface);
+            color: var(--m-muted);
+            padding: 7px 11px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .quick-chip.active,
+        .view-toggle.active {
+            background: rgba(15, 118, 110, 0.14);
+            color: var(--m-brand);
+            border-color: rgba(15, 118, 110, 0.35);
+        }
+
+        .active-filters {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-pill {
+            border: 1px solid var(--m-line);
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--m-surface) 92%, #fff 8%);
+            color: var(--m-muted);
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin: 30px 0;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 14px;
+            padding-bottom: 28px;
         }
+
+        .products-grid.list {
+            grid-template-columns: 1fr;
+        }
+
         .product-card {
-            position: relative;
+            background: var(--m-surface);
+            border: 1px solid var(--m-line);
+            border-radius: 14px;
             overflow: hidden;
+            display: grid;
+            grid-template-columns: 82px 1fr;
+            gap: 0;
         }
+
+        .products-grid.grid .product-card {
+            grid-template-columns: 1fr;
+        }
+
         .product-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-            border-radius: 8px;
-            margin-bottom: 15px;
+            background: linear-gradient(145deg, #e8f5f4 0%, #dbeafe 100%);
+            color: #0f766e;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-        }
-        .product-price {
             font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
-            margin: 10px 0;
+            font-weight: 800;
+            min-height: 82px;
         }
-        .vendor-badge {
-            display: inline-block;
-            background: var(--secondary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+
+        .products-grid.grid .product-image {
+            min-height: 160px;
+        }
+
+        .product-body {
+            padding: 12px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .product-description {
+            color: var(--m-muted);
+            font-size: 14px;
+            min-height: 40px;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
             margin-top: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .product-price {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--m-brand-dark);
+        }
+
+        .vendor-badge {
+            background: rgba(15, 118, 110, 0.14);
+            color: var(--m-brand);
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .category-pill {
+            margin-top: 10px;
+            display: inline-block;
+            background: #ffedd5;
+            color: #9a3412;
+            border-radius: 999px;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .action-row {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-row .btn {
+            width: 100%;
+            padding: 9px 10px;
+            font-size: 13px;
+        }
+
+        .fav-btn {
+            width: 40px;
+            border: 1px solid var(--m-line);
+            border-radius: 10px;
+            background: var(--m-surface);
+            color: var(--m-muted);
+            cursor: pointer;
+        }
+
+        .fav-btn.saved {
+            color: #dc2626;
+            border-color: #fecaca;
+            background: #fff1f2;
+        }
+
+        .empty-state {
+            display: none;
+            text-align: center;
+            border: 1px dashed var(--m-line);
+            border-radius: 14px;
+            background: var(--m-surface);
+            padding: 28px 14px;
+            margin-bottom: 32px;
+        }
+
+        .footer {
+            background: #0b1222;
+            color: #fff;
+            text-align: center;
+            padding: 34px 20px;
+        }
+
+        @media (max-width: 980px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar" id="siteNav">
         <div class="container">
-            <div class="logo">🏪 SmallVendors</div>
-            <div class="nav-links">
+            <div class="logo">SmallVendors</div>
+            <button type="button" class="nav-toggle" id="navToggle" aria-label="Toggle menu">Menu</button>
+            <div class="nav-links" id="navLinks">
                 <a href="index.html">Home</a>
                 <a href="marketplace.html">Marketplace</a>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="login.html" class="btn btn-primary" style="padding: 8px 20px;">Login</a>
+                <a href="signup.html">Sign Up</a>
+                <a href="login.html" class="btn btn-primary" style="padding:8px 16px;">Login</a>
+                <button type="button" class="theme-btn" id="themeToggle" aria-label="Toggle theme">D</button>
             </div>
         </div>
     </nav>
 
     <section class="marketplace-header">
         <div class="container">
-            <h1 style="font-size: 42px; margin-bottom: 15px;">Discover Local Products</h1>
-            <p style="font-size: 18px; opacity: 0.9;">Browse thousands of products from local vendors</p>
+            <div class="hero-block">
+                <h1>Discover trusted local products</h1>
+                <p>Use smarter filtering, saved preferences, and faster browsing to find the best nearby offers.</p>
+                <div class="hero-tags">
+                    <span class="hero-tag">Saved preferences</span>
+                    <span class="hero-tag">Grid and list views</span>
+                    <span class="hero-tag">Favorites memory</span>
+                </div>
+            </div>
         </div>
     </section>
 
-    <div class="container" style="padding: 40px 20px;">
-        <div class="filters">
-            <input type="text" placeholder="Search products..." id="searchInput">
-            <select id="categoryFilter">
-                <option value="">All Categories</option>
-                <option value="food">Food & Beverages</option>
-                <option value="fashion">Fashion</option>
-                <option value="electronics">Electronics</option>
-                <option value="home">Home & Garden</option>
-                <option value="beauty">Beauty & Health</option>
-            </select>
-            <select id="priceFilter">
-                <option value="">All Prices</option>
-                <option value="low">Under $50</option>
-                <option value="mid">$50 - $200</option>
-                <option value="high">Over $200</option>
-            </select>
-            <button class="btn btn-primary">Apply Filters</button>
-        </div>
-
-        <div class="products-grid" id="productsGrid">
-            <div class="card product-card">
-                <div class="product-image">🍕</div>
-                <h3>Artisan Pizza</h3>
-                <p style="color: var(--gray); font-size: 14px;">Fresh handmade pizza with organic ingredients</p>
-                <div class="product-price">$15.99</div>
-                <span class="vendor-badge">Joe's Pizzeria</span>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+    <main class="container" style="padding: 0 20px 24px;">
+        <section class="panel">
+            <div class="controls-grid">
+                <input type="text" id="searchInput" placeholder="Press / to search products, vendors, categories">
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="food">Food and Beverages</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="home">Home and Garden</option>
+                    <option value="beauty">Beauty and Health</option>
+                </select>
+                <select id="priceFilter">
+                    <option value="">All Prices</option>
+                    <option value="low">Under $25</option>
+                    <option value="mid">$25 - $50</option>
+                    <option value="high">Over $50</option>
+                </select>
+                <select id="sortFilter">
+                    <option value="featured">Sort: Featured</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Name: A to Z</option>
+                </select>
             </div>
-
-            <div class="card product-card">
-                <div class="product-image">👕</div>
-                <h3>Cotton T-Shirt</h3>
-                <p style="color: var(--gray); font-size: 14px;">Premium quality cotton, various colors</p>
-                <div class="product-price">$24.99</div>
-                <span class="vendor-badge">Fashion Hub</span>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
+            <div class="toolbar">
+                <div class="result-text" id="resultsText">Showing 8 of 8 products</div>
+                <div class="toolbar-right">
+                    <button type="button" class="quick-chip active" data-chip="all">All</button>
+                    <button type="button" class="quick-chip" data-chip="food">Food</button>
+                    <button type="button" class="quick-chip" data-chip="fashion">Fashion</button>
+                    <button type="button" class="quick-chip" data-chip="electronics">Electronics</button>
+                    <button type="button" class="view-toggle active" data-view="grid">Grid</button>
+                    <button type="button" class="view-toggle" data-view="list">List</button>
+                </div>
             </div>
+            <div class="active-filters" id="activeFilters"></div>
+        </section>
 
-            <div class="card product-card">
-                <div class="product-image">📱</div>
-                <h3>Phone Accessories</h3>
-                <p style="color: var(--gray); font-size: 14px;">Cases, chargers, and screen protectors</p>
-                <div class="product-price">$12.99</div>
-                <span class="vendor-badge">Tech Store</span>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
-            </div>
+        <section class="products-grid grid" id="productsGrid"></section>
 
-            <div class="card product-card">
-                <div class="product-image">🌿</div>
-                <h3>Indoor Plants</h3>
-                <p style="color: var(--gray); font-size: 14px;">Beautiful plants for your home or office</p>
-                <div class="product-price">$18.50</div>
-                <span class="vendor-badge">Green Garden</span>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
-            </div>
+        <section class="empty-state" id="emptyState">
+            <h3>No products match your filters</h3>
+            <p style="color:var(--m-muted); margin: 8px 0 12px;">Try a broader search or reset all filters.</p>
+            <button class="btn btn-primary" id="resetFilters">Reset Filters</button>
+        </section>
+    </main>
 
-            <div class="card product-card">
-                <div class="product-image">💄</div>
-                <h3>Organic Cosmetics</h3>
-                <p style="color: var(--gray); font-size: 14px;">Natural beauty products, cruelty-free</p>
-                <div class="product-price">$32.00</div>
-                <span class="vendor-badge">Beauty Bliss</span>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
-            </div>
-
-            <div class="card product-card">
-                <div class="product-image">☕</div>
-                <h3>Coffee Beans</h3>
-                <p style="color: var(--gray); font-size: 14px;">Freshly roasted premium coffee beans</p>
-                <div class="product-price">$22.99</div>
-                <span class="vendor-badge">Coffee Corner</span>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
-            </div>
-
-            <div class="card product-card">
-                <div class="product-image">🎨</div>
-                <h3>Handmade Crafts</h3>
-                <p style="color: var(--gray); font-size: 14px;">Unique handcrafted decorative items</p>
-                <div class="product-price">$45.00</div>
-                <span class="vendor-badge">Artisan Corner</span>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
-            </div>
-
-            <div class="card product-card">
-                <div class="product-image">🍰</div>
-                <h3>Custom Cakes</h3>
-                <p style="color: var(--gray); font-size: 14px;">Delicious cakes for any occasion</p>
-                <div class="product-price">$35.99</div>
-                <span class="vendor-badge">Sweet Treats</span>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">View Details</button>
-            </div>
-        </div>
-    </div>
-
-    <footer style="background: var(--dark); color: white; padding: 40px 20px; text-align: center; margin-top: 60px;">
+    <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 SmallVendors. All rights reserved.</p>
+            <p>&copy; 2026 SmallVendors. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        const products = [
+            { id: 1, icon: "FD", name: "Artisan Pizza", desc: "Fresh handmade pizza with organic ingredients.", price: 15.99, vendor: "Joe's Pizzeria", category: "food" },
+            { id: 2, icon: "FS", name: "Cotton T-Shirt", desc: "Premium quality cotton with modern fits.", price: 24.99, vendor: "Fashion Hub", category: "fashion" },
+            { id: 3, icon: "EL", name: "Phone Accessories", desc: "Cases, chargers, and tempered glass sets.", price: 12.99, vendor: "Tech Store", category: "electronics" },
+            { id: 4, icon: "HG", name: "Indoor Plants", desc: "Easy-care plants for home and office.", price: 18.50, vendor: "Green Garden", category: "home" },
+            { id: 5, icon: "BH", name: "Organic Cosmetics", desc: "Natural beauty products, cruelty-free.", price: 32.00, vendor: "Beauty Bliss", category: "beauty" },
+            { id: 6, icon: "FD", name: "Coffee Beans", desc: "Freshly roasted premium arabica beans.", price: 22.99, vendor: "Coffee Corner", category: "food" },
+            { id: 7, icon: "HG", name: "Handmade Crafts", desc: "Unique handcrafted decorative items.", price: 45.00, vendor: "Artisan Corner", category: "home" },
+            { id: 8, icon: "FD", name: "Custom Cakes", desc: "Delicious cakes made to order.", price: 35.99, vendor: "Sweet Treats", category: "food" }
+        ];
+
+        const productsGrid = document.getElementById("productsGrid");
+        const emptyState = document.getElementById("emptyState");
+        const resultsText = document.getElementById("resultsText");
+        const searchInput = document.getElementById("searchInput");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const priceFilter = document.getElementById("priceFilter");
+        const sortFilter = document.getElementById("sortFilter");
+        const resetFilters = document.getElementById("resetFilters");
+        const activeFilters = document.getElementById("activeFilters");
+        const quickChips = document.querySelectorAll(".quick-chip");
+        const viewToggles = document.querySelectorAll(".view-toggle");
+
+        const savedFavorites = new Set(JSON.parse(localStorage.getItem("sv-favorites") || "[]"));
+        const savedFilters = JSON.parse(localStorage.getItem("sv-market-filters") || "{}");
+        const savedView = localStorage.getItem("sv-market-view") || "grid";
+
+        function mapCategoryName(category) {
+            const map = {
+                food: "Food and Beverages",
+                fashion: "Fashion",
+                electronics: "Electronics",
+                home: "Home and Garden",
+                beauty: "Beauty and Health"
+            };
+            return map[category] || category;
+        }
+
+        function filterByPrice(item, band) {
+            if (!band) return true;
+            if (band === "low") return item.price < 25;
+            if (band === "mid") return item.price >= 25 && item.price <= 50;
+            return item.price > 50;
+        }
+
+        function saveFilters() {
+            localStorage.setItem("sv-market-filters", JSON.stringify({
+                query: searchInput.value.trim(),
+                category: categoryFilter.value,
+                price: priceFilter.value,
+                sort: sortFilter.value
+            }));
+        }
+
+        function setActiveChip(chipValue) {
+            quickChips.forEach((chip) => {
+                chip.classList.toggle("active", chip.dataset.chip === chipValue);
+            });
+        }
+
+        function setView(view) {
+            productsGrid.classList.toggle("grid", view === "grid");
+            productsGrid.classList.toggle("list", view === "list");
+            viewToggles.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
+            localStorage.setItem("sv-market-view", view);
+        }
+
+        function toggleFavorite(id, button) {
+            if (savedFavorites.has(id)) {
+                savedFavorites.delete(id);
+            } else {
+                savedFavorites.add(id);
+            }
+            localStorage.setItem("sv-favorites", JSON.stringify([...savedFavorites]));
+            button.classList.toggle("saved", savedFavorites.has(id));
+            button.textContent = savedFavorites.has(id) ? "Saved" : "Save";
+        }
+
+        function renderActiveFilters(query, category, priceBand) {
+            const parts = [];
+            if (query) parts.push(`Search: ${query}`);
+            if (category) parts.push(`Category: ${mapCategoryName(category)}`);
+            if (priceBand) parts.push(`Price: ${priceBand}`);
+            activeFilters.innerHTML = parts.map((part) => `<span class="filter-pill">${part}</span>`).join("");
+        }
+
+        function renderProducts(items) {
+            productsGrid.innerHTML = "";
+            if (!items.length) {
+                emptyState.style.display = "block";
+                return;
+            }
+            emptyState.style.display = "none";
+
+            items.forEach((item) => {
+                const card = document.createElement("article");
+                card.className = "product-card";
+                card.innerHTML = `
+                    <div class="product-image">${item.icon}</div>
+                    <div class="product-body">
+                        <h3 class="product-name">${item.name}</h3>
+                        <p class="product-description">${item.desc}</p>
+                        <div class="product-meta">
+                            <div class="product-price">$${item.price.toFixed(2)}</div>
+                            <span class="vendor-badge">${item.vendor}</span>
+                        </div>
+                        <span class="category-pill">${mapCategoryName(item.category)}</span>
+                        <div class="action-row">
+                            <button class="btn btn-primary">View Details</button>
+                            <button class="fav-btn ${savedFavorites.has(item.id) ? "saved" : ""}" data-fav-id="${item.id}">
+                                ${savedFavorites.has(item.id) ? "Saved" : "Save"}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                productsGrid.appendChild(card);
+            });
+
+            productsGrid.querySelectorAll("[data-fav-id]").forEach((button) => {
+                button.addEventListener("click", () => toggleFavorite(Number(button.dataset.favId), button));
+            });
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.trim().toLowerCase();
+            const category = categoryFilter.value;
+            const priceBand = priceFilter.value;
+            const sortBy = sortFilter.value;
+
+            let filtered = products.filter((item) => {
+                const searchable = `${item.name} ${item.desc} ${item.vendor} ${item.category}`.toLowerCase();
+                return (!query || searchable.includes(query)) && (!category || item.category === category) && filterByPrice(item, priceBand);
+            });
+
+            if (sortBy === "price-asc") filtered.sort((a, b) => a.price - b.price);
+            if (sortBy === "price-desc") filtered.sort((a, b) => b.price - a.price);
+            if (sortBy === "name-asc") filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+            resultsText.textContent = `Showing ${filtered.length} of ${products.length} products`;
+            renderActiveFilters(query, category, priceBand);
+            renderProducts(filtered);
+            saveFilters();
+        }
+
+        searchInput.addEventListener("input", applyFilters);
+        categoryFilter.addEventListener("change", () => {
+            setActiveChip(categoryFilter.value || "all");
+            applyFilters();
+        });
+        priceFilter.addEventListener("change", applyFilters);
+        sortFilter.addEventListener("change", applyFilters);
+
+        quickChips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                const value = chip.dataset.chip;
+                categoryFilter.value = value === "all" ? "" : value;
+                setActiveChip(value);
+                applyFilters();
+            });
+        });
+
+        viewToggles.forEach((btn) => {
+            btn.addEventListener("click", () => setView(btn.dataset.view));
+        });
+
+        resetFilters.addEventListener("click", () => {
+            searchInput.value = "";
+            categoryFilter.value = "";
+            priceFilter.value = "";
+            sortFilter.value = "featured";
+            setActiveChip("all");
+            applyFilters();
+        });
+
+        if (savedFilters.query) searchInput.value = savedFilters.query;
+        if (savedFilters.category) categoryFilter.value = savedFilters.category;
+        if (savedFilters.price) priceFilter.value = savedFilters.price;
+        if (savedFilters.sort) sortFilter.value = savedFilters.sort;
+        setActiveChip(categoryFilter.value || "all");
+        setView(savedView);
+        applyFilters();
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "/" && document.activeElement !== searchInput) {
+                event.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        const nav = document.getElementById("siteNav");
+        const navToggle = document.getElementById("navToggle");
+        const navLinks = document.getElementById("navLinks");
+        const themeToggle = document.getElementById("themeToggle");
+        if (localStorage.getItem("sv-theme") === "dusk") {
+            document.body.setAttribute("data-theme", "dusk");
+        }
+        navToggle.addEventListener("click", () => navLinks.classList.toggle("open"));
+        themeToggle.addEventListener("click", () => {
+            const next = document.body.getAttribute("data-theme") === "dusk" ? "light" : "dusk";
+            if (next === "light") {
+                document.body.removeAttribute("data-theme");
+            } else {
+                document.body.setAttribute("data-theme", "dusk");
+            }
+            localStorage.setItem("sv-theme", next);
+        });
+        window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 6));
+    </script>
 </body>
 </html>

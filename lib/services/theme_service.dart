@@ -8,8 +8,6 @@ class ThemeService extends ChangeNotifier {
   bool get isDarkMode => _isDarkMode;
 
   static const _primaryColor = Color(0xFF2563EB);
-  static const _secondaryColor = Color(0xFF7C3AED);
-  static const _accentColor = Color(0xFF059669);
 
   ThemeData get lightTheme => ThemeData(
     useMaterial3: true,

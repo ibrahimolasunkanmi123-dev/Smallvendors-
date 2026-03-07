@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../services/appwrite_service.dart';
 import 'buyer_main_screen.dart';
 import 'signup_screen.dart';
+import '../models/buyer.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
+  final _appwriteService = AppwriteService();
   bool _isLoading = false;
 
   Future<void> _login() async {
@@ -23,22 +24,27 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
     
     try {
-      final response = await _authService.signInWithEmail(
+      final session = await _appwriteService.signIn(
         _emailController.text.trim(),
         _passwordController.text,
       );
       
-      if (response.user != null) {
-        // Get user profile from Supabase
-        final buyer = await _authService.getUserProfile();
+      final user = await _appwriteService.getCurrentUser();
+      if (user != null) {
+        await _appwriteService.ensureUserProfiles(user: user);
         
-        if (buyer != null && mounted) {
+        final buyer = Buyer(
+          id: user.$id,
+          name: user.name,
+          email: user.email,
+          createdAt: DateTime.now(),
+        );
+        
+        if (mounted) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => BuyerMainScreen(buyer: buyer)),
           );
-        } else {
-          _showError('Profile not found. Please contact support.');
         }
       } else {
         _showError('Login failed. Please check your credentials.');

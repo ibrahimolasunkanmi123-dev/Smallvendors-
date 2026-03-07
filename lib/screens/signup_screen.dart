@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
+import '../services/appwrite_service.dart';
 import 'enhanced_profile_setup_screen.dart';
 import 'login_screen.dart';
 
@@ -18,7 +18,7 @@ class _SignupScreenState extends State<SignupScreen> with TickerProviderStateMix
   final _confirmPasswordController = TextEditingController();
   final _nameController = TextEditingController();
   
-  final _authService = AuthService();
+  final _appwriteService = AppwriteService();
   
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -64,12 +64,19 @@ class _SignupScreenState extends State<SignupScreen> with TickerProviderStateMix
     
     setState(() => _isLoading = true);
     
-    // Test mode: Skip Supabase for debugging
-    const testMode = true;
-    
-    if (testMode) {
-      print('TEST MODE: Bypassing Supabase signup');
-      await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+    try {
+      final user = await _appwriteService.signUp(
+        _emailController.text.trim(),
+        _passwordController.text,
+        _nameController.text.trim(),
+      );
+      
+      await _appwriteService.createUserProfile(
+        userId: user.$id,
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        userType: 'buyer',
+      );
       
       if (mounted) {
         Navigator.pushReplacement(
@@ -79,30 +86,8 @@ class _SignupScreenState extends State<SignupScreen> with TickerProviderStateMix
           ),
         );
       }
-      return;
-    }
-    
-    try {
-      final response = await _authService.signUpWithEmail(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
-      
-      if (response.user != null && mounted) {
-        print('User created successfully: ${response.user!.id}');
-        
-        // Go directly to profile setup
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const EnhancedProfileSetupScreen(),
-          ),
-        );
-      } else {
-        throw Exception('Failed to create user account - no user returned');
-      }
     } catch (e) {
-      print('Signup failed: $e');
+      print('Signup error: $e');
       _showError(_getErrorMessage(e.toString()));
     } finally {
       if (mounted) setState(() => _isLoading = false);

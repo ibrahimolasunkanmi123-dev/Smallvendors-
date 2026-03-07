@@ -1,5 +1,6 @@
-
+import 'dart:convert';
 import '../models/notification.dart';
+import 'storage_service.dart';
 
 
 class PushNotificationService {
@@ -9,6 +10,14 @@ class PushNotificationService {
 
 
   final Map<String, List<AppNotification>> _cache = {};
+  final _storage = StorageService();
+  static const String _notificationsKey = 'push_notifications';
+
+  Future<void> _persistNotifications(String userId, List<AppNotification> notifications) async {
+    final key = '${_notificationsKey}_$userId';
+    final jsonList = notifications.map((n) => n.toJson()).toList();
+    await _storage.saveData(key, jsonEncode(jsonList));
+  }
 
   Future<void> sendNotification({
     required String userId,
@@ -29,10 +38,26 @@ class PushNotificationService {
     final notifications = await getNotifications(userId);
     notifications.insert(0, notification);
     _cache[userId] = notifications;
+    await _persistNotifications(userId, notifications);
   }
 
   Future<List<AppNotification>> getNotifications(String userId) async {
-    return _cache[userId] ?? [];
+    if (_cache.containsKey(userId)) {
+      return _cache[userId]!;
+    }
+
+    final key = '${_notificationsKey}_$userId';
+    final raw = await _storage.getData(key);
+    if (raw == null || raw.isEmpty) {
+      _cache[userId] = [];
+      return [];
+    }
+
+    final list = (jsonDecode(raw) as List)
+        .map((item) => AppNotification.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+    _cache[userId] = list;
+    return list;
   }
 
   Future<void> markAsRead(String userId, String notificationId) async {
@@ -41,6 +66,7 @@ class PushNotificationService {
     if (index != -1) {
       notifications[index] = notifications[index].copyWith(isRead: true);
       _cache[userId] = notifications;
+      await _persistNotifications(userId, notifications);
     }
   }
 

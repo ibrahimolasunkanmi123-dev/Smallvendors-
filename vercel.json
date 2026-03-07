@@ -1,10 +1,12 @@
 {
-  "buildCommand": "flutter build web --release --base-href /",
-  "outputDirectory": "build/web",
-  "framework": null,
+  "functions": {
+    "*.html": {
+      "runtime": "@vercel/static"
+    }
+  },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/",
       "destination": "/index.html"
     }
   ]

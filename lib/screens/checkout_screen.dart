@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/cart_item.dart';
 import '../models/buyer.dart';
+import '../models/notification.dart';
 import '../models/order.dart';
 import '../services/cart_service.dart';
 import '../services/storage_service.dart';
+import '../services/push_notification_service.dart';
+import 'buyer_order_history_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final List<CartItem> cartItems;
@@ -17,6 +20,7 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final _storage = StorageService();
+  final _notificationService = PushNotificationService();
   final _addressController = TextEditingController();
   final _notesController = TextEditingController();
   String _paymentMethod = 'Cash on Delivery';
@@ -56,6 +60,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       orders.add(newOrder);
       await _storage.saveOrders(orders);
 
+      if ((widget.buyer?.id ?? '').isNotEmpty) {
+        await _notificationService.sendNotification(
+          userId: widget.buyer!.id,
+          title: 'Order placed successfully',
+          message: 'Order #${newOrder.id.substring(0, 8)} is now being processed.',
+          type: NotificationType.order,
+          actionData: newOrder.id,
+        );
+      }
+
       if (widget.buyer != null) {
         await CartService().clearCart(widget.buyer!.id);
       }
@@ -67,7 +81,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context, true);
+        if (widget.buyer != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BuyerOrderHistoryScreen(buyer: widget.buyer!),
+            ),
+          );
+        } else {
+          Navigator.pop(context, true);
+        }
       }
     } catch (e) {
       if (mounted) {

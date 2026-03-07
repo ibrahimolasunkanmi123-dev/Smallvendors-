@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/storage_service.dart';
-import '../services/supabase_service.dart';
 import '../services/appwrite_service.dart';
 import 'buyer_dashboard.dart';
 import 'vendor_dashboard.dart';
-import 'onboarding_screen.dart';
-import 'public_marketplace.dart';
 
 extension FirstWhereOrNull<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
@@ -19,7 +15,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final _storage = StorageService();
   final _appwrite = AppwriteService();
 
   @override
@@ -67,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
     
     // If no user is logged in, go to authentication screen
     if (mounted) {
-      Navigator.pushReplacementNamed(context, '/appwrite-auth');
+      Navigator.pushReplacementNamed(context, '/marketplace');
     }
   }
 

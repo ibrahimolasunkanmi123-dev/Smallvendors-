@@ -16,9 +16,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
+    // Initialize Appwrite
+    AppwriteService().init();
+    print('Appwrite initialized successfully');
+    
+    // Initialize other services
     await SupabaseService.initialize();
     await SampleDataService.initializeSampleData();
-    AppwriteService().init();
   } catch (e) {
     print('Initialization error: $e');
   }
@@ -50,7 +54,7 @@ class SmallVendorsApp extends StatelessWidget {
             '/auth': (context) => const UnifiedAuthScreen(),
             '/login': (context) => const LoginScreen(),
             '/signup': (context) => const SignupScreen(),
-            '/appwrite-auth': (context) => AppwriteAuthScreen(),
+            '/appwrite-auth': (context) => const AppwriteAuthScreen(),
           },
           debugShowCheckedModeBanner: false,
         );

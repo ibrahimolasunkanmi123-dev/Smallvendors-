@@ -87,13 +87,9 @@ class _EnhancedProfileSetupScreenState extends State<EnhancedProfileSetupScreen>
     
     try {
       final location = await _locationService.getCurrentLocation();
-      if (location != null) {
-        setState(() {
-          _locationController.text = location;
-        });
-      } else {
-        _showError('Unable to get current location');
-      }
+      setState(() {
+        _locationController.text = location;
+      });
     } catch (e) {
       _showError('Location access denied');
     } finally {
@@ -106,71 +102,28 @@ class _EnhancedProfileSetupScreenState extends State<EnhancedProfileSetupScreen>
     
     setState(() => _isLoading = true);
     
-    // Test mode: Create local buyer for debugging
-    const testMode = true;
+    final buyer = Buyer(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: _nameController.text.trim(),
+      email: 'test@smallvendors.app',
+      location: _locationController.text.trim().isEmpty 
+          ? 'Location not set' 
+          : _locationController.text.trim(),
+      profileImage: _profileImage?.path,
+    );
     
-    if (testMode) {
-      // TEST MODE: Creating local buyer
-      
-      final buyer = Buyer(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _nameController.text.trim(),
-        email: 'test@smallvendors.app',
-        location: _locationController.text.trim().isEmpty 
-            ? 'Location not set' 
-            : _locationController.text.trim(),
-        profileImage: _profileImage?.path,
-      );
-      
-      // Save to local storage
-      final storage = StorageService();
-      final buyers = await storage.getBuyers();
-      buyers.add(buyer);
-      await storage.saveBuyers(buyers);
-      await storage.saveData('current_buyer', buyer.id);
-      
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => BuyerMainScreen(buyer: buyer)),
-          (route) => false,
-        );
-      }
-      return;
-    }
+    final storage = StorageService();
+    final buyers = await storage.getBuyers();
+    buyers.add(buyer);
+    await storage.saveBuyers(buyers);
+    await storage.saveData('current_buyer', buyer.id);
     
-    try {
-      final user = _authService.currentUser;
-      
-      if (user == null) {
-        throw Exception('No authenticated user found. Please sign up again.');
-      }
-      
-      // Completing profile for user: ${user.id}
-      
-      final buyer = await _authService.createUserProfile(
-        name: _nameController.text.trim(),
-        email: user.email!,
-        location: _locationController.text.trim().isEmpty 
-            ? 'Location not set' 
-            : _locationController.text.trim(),
-        profileImage: _profileImage?.path,
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => BuyerMainScreen(buyer: buyer)),
+        (route) => false,
       );
-      
-      // Profile completed successfully for: ${buyer.id}
-      
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => BuyerMainScreen(buyer: buyer)),
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      // Profile creation error: $e
-      _showError('Failed to create profile: ${e.toString()}');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
     }
   }
 

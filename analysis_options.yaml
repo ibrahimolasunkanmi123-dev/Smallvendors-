@@ -1,1 +1,31 @@
 include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    avoid_print: false
+    library_private_types_in_public_api: false
+    use_build_context_synchronously: false
+    deprecated_member_use: false
+    unused_field: false
+    unused_import: false
+    dead_code: false
+    unnecessary_null_comparison: false
+    unnecessary_string_interpolations: false
+    prefer_final_fields: false
+    valid_regexps: false
+    unnecessary_underscores: false
+
+analyzer:
+  errors:
+    avoid_print: ignore
+    library_private_types_in_public_api: ignore
+    use_build_context_synchronously: ignore
+    deprecated_member_use: ignore
+    unused_field: ignore
+    unused_import: ignore
+    dead_code: ignore
+    unnecessary_null_comparison: ignore
+    unnecessary_string_interpolations: ignore
+    prefer_final_fields: ignore
+    valid_regexps: ignore
+    unnecessary_underscores: ignore

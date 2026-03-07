@@ -17,7 +17,7 @@
 
 ### Create Database
 1. Go to **Databases** in your Appwrite console
-2. Create a new database with ID: `smallvendors`
+2. Create a new database with ID: `smallvendors-db`
 
 ### Create Collections
 

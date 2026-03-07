@@ -39,7 +39,6 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen> {
   bool _loading = false;
   bool _isEditing = false;
   String? _selectedImagePath;
-  int _selectedTabIndex = 0;
 
   @override
   void initState() {
@@ -425,7 +424,7 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen> {
               Expanded(
                 child: _buildStatCard(
                   'Rating',
-                  '${widget.vendor!.rating.toStringAsFixed(1)}',
+                  widget.vendor!.rating.toStringAsFixed(1),
                   Icons.star,
                   Colors.orange,
                 ),

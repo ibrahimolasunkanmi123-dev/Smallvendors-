@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../models/buyer.dart';
 import '../models/order.dart';
 import '../services/storage_service.dart';
@@ -150,15 +151,24 @@ class _BuyerOrderHistoryScreenState extends State<BuyerOrderHistoryScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Total: \$${order.totalAmount.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                  Expanded(
+                    child: Text(
+                      'Total: \$${order.totalAmount.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
                     ),
                   ),
-                  const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                  if (order.status.toLowerCase() != 'delivered' &&
+                      order.status.toLowerCase() != 'cancelled')
+                    TextButton(
+                      onPressed: () => _showTrackingModal(order),
+                      child: const Text('Track'),
+                    )
+                  else
+                    const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
                 ],
               ),
             ],
@@ -278,5 +288,89 @@ class _BuyerOrderHistoryScreenState extends State<BuyerOrderHistoryScreen> {
         ),
       ),
     );
+  }
+
+  void _showTrackingModal(Order order) {
+    final statusFlow = [
+      'pending',
+      'confirmed',
+      'preparing',
+      'ready',
+      'delivered',
+    ];
+    int currentIndex = statusFlow.indexOf(order.status.toLowerCase());
+    if (currentIndex < 0) currentIndex = 0;
+    Timer? timer;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            timer ??= Timer.periodic(const Duration(seconds: 6), (_) {
+              if (currentIndex < statusFlow.length - 1) {
+                setSheetState(() {
+                  currentIndex++;
+                });
+              } else {
+                timer?.cancel();
+              }
+            });
+
+            final progress = (currentIndex + 1) / statusFlow.length;
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Tracking Order #${order.id.substring(0, 8)}',
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  LinearProgressIndicator(value: progress),
+                  const SizedBox(height: 14),
+                  ...List.generate(statusFlow.length, (index) {
+                    final done = index <= currentIndex;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            done ? Icons.check_circle : Icons.radio_button_unchecked,
+                            color: done ? Colors.green : Colors.grey,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            statusFlow[index].toUpperCase(),
+                            style: TextStyle(
+                              fontWeight: done ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Updates refresh automatically.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ).whenComplete(() {
+      timer?.cancel();
+    });
   }
 }

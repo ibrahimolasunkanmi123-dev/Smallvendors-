@@ -5,7 +5,6 @@ import '../models/buyer.dart';
 import '../models/vendor.dart';
 import 'buyer_main_screen.dart';
 import 'main_dashboard.dart';
-import 'enhanced_profile_setup_screen.dart';
 
 class UnifiedAuthScreen extends StatefulWidget {
   const UnifiedAuthScreen({super.key});

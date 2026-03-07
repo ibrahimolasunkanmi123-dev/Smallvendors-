@@ -468,7 +468,7 @@ class _ProductShowcaseScreenState extends State<ProductShowcaseScreen> with Tick
                             size: 16,
                           ),
                           Text(
-                            '${(product.orders / 10).toStringAsFixed(1)}',
+                            (product.orders / 10).toStringAsFixed(1),
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12,

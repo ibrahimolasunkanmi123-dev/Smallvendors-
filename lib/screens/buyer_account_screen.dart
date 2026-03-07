@@ -4,6 +4,7 @@ import '../services/storage_service.dart';
 import 'buyer_login_screen.dart';
 import 'buyer_order_history_screen.dart';
 import 'buyer_profile_screen.dart';
+import 'notifications_screen.dart';
 
 class BuyerAccountScreen extends StatelessWidget {
   final Buyer? buyer;
@@ -93,7 +94,31 @@ class BuyerAccountScreen extends StatelessWidget {
             leading: const Icon(Icons.notifications),
             title: const Text('Notifications'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {},
+            onTap: () {
+              if (buyer != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => NotificationsScreen(userId: buyer!.id),
+                  ),
+                );
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.local_shipping),
+            title: const Text('Track Current Order'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              if (buyer != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BuyerOrderHistoryScreen(buyer: buyer!),
+                  ),
+                );
+              }
+            },
           ),
           ListTile(
             leading: const Icon(Icons.help),
