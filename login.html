@@ -75,6 +75,16 @@
             .setProject('699b21ef002b28b002d7');
         const account = new Account(client);
 
+        async function createSession(email, password) {
+            if (typeof account.createEmailPasswordSession === 'function') {
+                return account.createEmailPasswordSession(email, password);
+            }
+            if (typeof account.createEmailSession === 'function') {
+                return account.createEmailSession(email, password);
+            }
+            throw new Error('Appwrite session method not available in loaded SDK version.');
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -90,7 +100,7 @@
             showMessage('Signing in...', 'info');
             
             try {
-                const session = await account.createEmailPasswordSession(email, password);
+                await createSession(email, password);
                 showMessage('Login successful! Redirecting...', 'success');
                 setTimeout(() => {
                     window.location.href = 'marketplace.html';
