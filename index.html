@@ -477,11 +477,14 @@
   </main>
 
   <script>
-    const { Client, Account } = Appwrite;
+    const { Client, Account, Databases } = Appwrite;
     const client = new Client()
       .setEndpoint('https://nyc.cloud.appwrite.io/v1')
       .setProject('699b21ef002b28b002d7');
     const account = new Account(client);
+    const databases = new Databases(client);
+    const DATABASE_IDS = ['699b24bd001c72ccf9b6', 'smallvendors'];
+    const USERS_COLLECTION_ID = 'users';
 
     const products = [
       { icon: 'FD', name: 'Artisan Pizza', desc: 'Fresh handmade pizza with organic ingredients.', price: 15.99, vendor: 'Joe\'s Pizzeria', category: 'food' },
@@ -502,12 +505,14 @@
     const departmentSelect = document.getElementById('departmentSelect');
     const profilePanel = document.getElementById('profilePanel');
     const profileTitle = document.getElementById('profileTitle');
+    const profileSub = document.getElementById('profileSub');
     const accountLink = document.getElementById('accountLink');
     const accountMenuWrap = document.getElementById('accountMenuWrap');
     const accountMenu = document.getElementById('accountMenu');
     const signupNav = document.getElementById('signupNav');
     const loginNav = document.getElementById('loginNav');
     const logoutBtn = document.getElementById('logoutBtn');
+    const profileActions = document.querySelector('.profile-actions');
 
     function render(items) {
       productsGrid.innerHTML = '';
@@ -547,13 +552,59 @@
     departmentSelect.addEventListener('change', filterProducts);
     globalSearchBtn.addEventListener('click', filterProducts);
 
-    document.querySelectorAll('[data-feature]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const feature = btn.getAttribute('data-feature');
-        localStorage.setItem('sv-profile-feature', feature);
+    const CUSTOMER_FEATURES = [
+      { key: 'place_order', label: 'Place and Order' },
+      { key: 'payment_options', label: 'Payment Options' },
+      { key: 'track_order', label: 'Track and Order' },
+      { key: 'cancel_order', label: 'Cancel an Order' },
+      { key: 'returns_refunds', label: 'Returns and Refunds' },
+      { key: 'cache_preferences', label: 'Cache Preferences' },
+      { key: 'live_chat', label: 'Live Chat' },
+      { key: 'help_center', label: 'Help Center' }
+    ];
+
+    const VENDOR_FEATURES = [
+      { key: 'post_products', label: 'Posting Products' },
+      { key: 'payment_options', label: 'Payment Options' },
+      { key: 'live_chat', label: 'Live Chat' },
+      { key: 'help_center', label: 'Help Center' }
+    ];
+
+    function attachFeatureAction(button, featureKey) {
+      button.addEventListener('click', () => {
+        localStorage.setItem('sv-profile-feature', featureKey);
         window.location.href = 'marketplace.html';
       });
-    });
+    }
+
+    function renderRoleFeatures(userType) {
+      const isVendor = userType === 'vendor';
+      const features = isVendor ? VENDOR_FEATURES : CUSTOMER_FEATURES;
+      profileActions.innerHTML = '';
+      profileSub.textContent = isVendor
+        ? 'Vendor tools and actions are ready.'
+        : 'Customer actions and support tools are ready.';
+
+      for (const feature of features) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = feature.label;
+        attachFeatureAction(button, feature.key);
+        profileActions.appendChild(button);
+      }
+    }
+
+    async function getUserProfileDocument(userId) {
+      let lastError = null;
+      for (const dbId of DATABASE_IDS) {
+        try {
+          return await databases.getDocument(dbId, USERS_COLLECTION_ID, userId);
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError;
+    }
 
     async function syncAuthUi() {
       try {
@@ -565,6 +616,13 @@
         profilePanel.style.display = 'block';
         signupNav.style.display = 'none';
         loginNav.style.display = 'none';
+        try {
+          const profileDoc = await getUserProfileDocument(user.$id);
+          const userType = profileDoc.userType === 'vendor' ? 'vendor' : 'buyer';
+          renderRoleFeatures(userType);
+        } catch (_) {
+          renderRoleFeatures('buyer');
+        }
       } catch (_) {
         accountLink.innerHTML = 'Hello, sign in<strong>Account & Lists</strong>';
         accountLink.href = 'login.html';
