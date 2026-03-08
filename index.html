@@ -442,7 +442,6 @@
           <h2 id="profileTitle" style="margin:0 0 4px;">Welcome</h2>
           <p id="profileSub" style="margin:0;color:var(--muted);">Your account dashboard shortcuts are below.</p>
         </div>
-        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
       </div>
       <div class="profile-actions">
         <button type="button" data-feature="orders">Orders</button>
@@ -511,7 +510,6 @@
     const accountMenu = document.getElementById('accountMenu');
     const signupNav = document.getElementById('signupNav');
     const loginNav = document.getElementById('loginNav');
-    const logoutBtn = document.getElementById('logoutBtn');
     const profileActions = document.querySelector('.profile-actions');
 
     function render(items) {
@@ -553,6 +551,7 @@
     globalSearchBtn.addEventListener('click', filterProducts);
 
     const CUSTOMER_FEATURES = [
+      { key: 'logout', label: 'Logout' },
       { key: 'place_order', label: 'Place and Order' },
       { key: 'payment_options', label: 'Payment Options' },
       { key: 'track_order', label: 'Track and Order' },
@@ -572,6 +571,12 @@
 
     function attachFeatureAction(button, featureKey) {
       button.addEventListener('click', () => {
+        if (featureKey === 'logout') {
+          account.deleteSession('current')
+            .catch(() => {})
+            .finally(() => window.location.replace('index.html'));
+          return;
+        }
         localStorage.setItem('sv-profile-feature', featureKey);
         window.location.href = 'marketplace.html';
       });
@@ -633,8 +638,10 @@
     }
 
     accountLink.addEventListener('click', (event) => {
-      if (accountLink.getAttribute('href') === '#profile') {
+      if (accountLink.getAttribute('href') === '#profile' || accountLink.getAttribute('href') === '#profilePanel') {
         event.preventDefault();
+        profilePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        accountMenu.classList.remove('open');
       }
       accountMenu.classList.toggle('open');
     });
@@ -651,13 +658,6 @@
       if (!accountMenuWrap.contains(event.target)) {
         accountMenu.classList.remove('open');
       }
-    });
-
-    logoutBtn.addEventListener('click', async () => {
-      try {
-        await account.deleteSession('current');
-      } catch (_) {}
-      window.location.replace('index.html');
     });
 
     render(products);
