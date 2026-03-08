@@ -19,7 +19,7 @@
 
 ### 2. Verify Database & Collections Exist
 1. In Appwrite Console, go to **Databases**
-2. Check if database `smallvendors-db` exists
+2. Check if database `699b24bd001c72ccf9b6` exists
 3. Verify these collections exist:
    - `users`
    - `vendors`

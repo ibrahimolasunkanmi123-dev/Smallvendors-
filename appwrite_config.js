@@ -4,7 +4,7 @@
 const APPWRITE_CONFIG = {
   endpoint: 'https://cloud.appwrite.io/v1',
   projectId: 'YOUR_PROJECT_ID_HERE', // Get this from Appwrite Console
-  databaseId: 'smallvendors-db',
+  databaseId: '699b24bd001c72ccf9b6',
   
   // Collections
   usersCollection: 'users',

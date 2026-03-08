@@ -17,7 +17,6 @@ class AppwriteService {
     defaultValue: '699b24bd001c72ccf9b6',
   );
   static const String fallbackDatabaseId = 'smallvendors';
-  static const String legacyFallbackDatabaseId = 'smallvendors-db';
   static const String usersCollectionId = String.fromEnvironment(
     'APPWRITE_USERS_COLLECTION_ID',
     defaultValue: 'users',
@@ -41,7 +40,7 @@ class AppwriteService {
   AppwriteService._internal();
 
   List<String> get _databaseIdCandidates {
-    final ids = <String>[databaseId, fallbackDatabaseId, legacyFallbackDatabaseId];
+    final ids = <String>[databaseId, fallbackDatabaseId];
     return ids.toSet().toList();
   }
 

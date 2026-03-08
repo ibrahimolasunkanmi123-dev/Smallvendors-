@@ -12,7 +12,7 @@
 
 #### Database Setup
 1. In your Appwrite console, go to "Databases"
-2. Create a new database with ID: `smallvendors-db`
+2. Create a new database with ID: `699b24bd001c72ccf9b6`
 
 #### Collections Setup
 Create these collections in your database:
