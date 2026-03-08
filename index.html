@@ -90,6 +90,93 @@
             padding: 18px;
         }
 
+        .profile-actions {
+            margin-top: 14px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .profile-action-btn {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--ink);
+            border-radius: 12px;
+            padding: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .home-catalog {
+            padding: 18px 20px 36px;
+        }
+
+        .catalog-shell {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .catalog-header {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .catalog-search {
+            width: 100%;
+            height: 46px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: color-mix(in srgb, var(--surface) 90%, #fff 10%);
+            color: var(--ink);
+            padding: 0 12px;
+            font-size: 15px;
+        }
+
+        .catalog-count {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .home-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 12px;
+        }
+
+        .home-product-card {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--surface);
+            padding: 12px;
+        }
+
+        .home-product-card h3 {
+            font-size: 18px;
+            margin: 0 0 6px;
+        }
+
+        .home-product-card p {
+            color: var(--muted);
+            margin: 0 0 10px;
+            font-size: 14px;
+        }
+
+        .home-product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .legacy-home-hidden {
+            display: none !important;
+        }
+
         .hero {
             padding: 84px 20px 62px;
         }
@@ -500,6 +587,9 @@
             .logo-strip {
                 grid-template-columns: 1fr;
             }
+            .profile-actions {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
@@ -509,8 +599,7 @@
             <div class="logo">SmallVendors</div>
             <button type="button" class="nav-toggle" id="navToggle" aria-label="Toggle menu">Menu</button>
             <div class="nav-links" id="navLinks">
-                <a href="#features">Features</a>
-                <a href="#faq">FAQ</a>
+                <a href="index.html">Home</a>
                 <a href="marketplace.html">Marketplace</a>
                 <a id="loginLink" href="login.html">Login</a>
                 <a id="signupLink" href="signup.html" class="btn btn-secondary" style="padding: 8px 20px;">Sign Up</a>
@@ -526,6 +615,22 @@
         <div class="profile-card">
             <h3 style="margin-bottom:8px;">Welcome back</h3>
             <p id="profileSummary" style="color:var(--muted);">Your account is active.</p>
+            <div class="profile-actions">
+                <button id="ordersBtn" type="button" class="profile-action-btn">Orders</button>
+                <button id="reviewsBtn" type="button" class="profile-action-btn">Ratings & Reviews</button>
+                <button id="wishlistBtn" type="button" class="profile-action-btn">Wishlist</button>
+                <button id="recentBtn" type="button" class="profile-action-btn">Recently Viewed</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-catalog">
+        <div class="catalog-shell">
+            <div class="catalog-header">
+                <input id="homeSearchInput" class="catalog-search" type="text" placeholder="Search products on home page">
+                <div id="homeProductCount" class="catalog-count">Showing 0 products</div>
+            </div>
+            <div id="homeProductsGrid" class="home-products-grid"></div>
         </div>
     </section>
 
@@ -750,7 +855,58 @@
         const logoutBtn = document.getElementById("logoutBtn");
         const profileSpotlight = document.getElementById("profile");
         const profileSummary = document.getElementById("profileSummary");
+        const ordersBtn = document.getElementById("ordersBtn");
+        const reviewsBtn = document.getElementById("reviewsBtn");
+        const wishlistBtn = document.getElementById("wishlistBtn");
+        const recentBtn = document.getElementById("recentBtn");
+        const homeSearchInput = document.getElementById("homeSearchInput");
+        const homeProductCount = document.getElementById("homeProductCount");
+        const homeProductsGrid = document.getElementById("homeProductsGrid");
         const prefersDusk = localStorage.getItem("sv-theme") === "dusk";
+
+        const homeProducts = [
+            { name: "Artisan Pizza", description: "Fresh handmade pizza with organic ingredients.", price: 15.99, vendor: "Joe's Pizzeria" },
+            { name: "Cotton T-Shirt", description: "Premium quality cotton with modern fits.", price: 24.99, vendor: "Fashion Hub" },
+            { name: "Phone Accessories", description: "Cases, chargers, and tempered glass sets.", price: 12.99, vendor: "Tech Store" },
+            { name: "Indoor Plants", description: "Easy-care plants for home and office.", price: 18.50, vendor: "Green Garden" },
+            { name: "Organic Cosmetics", description: "Natural beauty products, cruelty-free.", price: 32.00, vendor: "Beauty Bliss" },
+            { name: "Coffee Beans", description: "Freshly roasted premium arabica beans.", price: 22.99, vendor: "Coffee Corner" },
+            { name: "Handmade Crafts", description: "Unique handcrafted decorative items.", price: 45.00, vendor: "Artisan Corner" },
+            { name: "Custom Cakes", description: "Delicious cakes made to order.", price: 35.99, vendor: "Sweet Treats" }
+        ];
+
+        function hideLegacyHomeSections() {
+            document.querySelectorAll(".hero, .logo-strip, .section, .cta-section").forEach((el) => {
+                el.classList.add("legacy-home-hidden");
+            });
+        }
+
+        function renderHomeProducts(items) {
+            homeProductsGrid.innerHTML = "";
+            for (const item of items) {
+                const card = document.createElement("article");
+                card.className = "home-product-card";
+                card.innerHTML = `
+                    <h3>${item.name}</h3>
+                    <p>${item.description}</p>
+                    <div class="home-product-meta">
+                        <strong>$${item.price.toFixed(2)}</strong>
+                        <span>${item.vendor}</span>
+                    </div>
+                `;
+                homeProductsGrid.appendChild(card);
+            }
+            homeProductCount.textContent = `Showing ${items.length} products`;
+        }
+
+        function filterHomeProducts() {
+            const query = homeSearchInput.value.trim().toLowerCase();
+            const filtered = homeProducts.filter((item) => {
+                const haystack = `${item.name} ${item.description} ${item.vendor}`.toLowerCase();
+                return !query || haystack.includes(query);
+            });
+            renderHomeProducts(filtered);
+        }
 
         if (prefersDusk) {
             document.body.setAttribute("data-theme", "dusk");
@@ -788,6 +944,18 @@
             } catch (_) {}
             window.location.replace("index.html");
         });
+
+        function goToProfileFeature(feature) {
+            localStorage.setItem("sv-profile-feature", feature);
+            window.location.href = "marketplace.html";
+        }
+
+        ordersBtn.addEventListener("click", () => goToProfileFeature("orders"));
+        reviewsBtn.addEventListener("click", () => goToProfileFeature("reviews"));
+        wishlistBtn.addEventListener("click", () => goToProfileFeature("wishlist"));
+        recentBtn.addEventListener("click", () => goToProfileFeature("recent"));
+
+        homeSearchInput.addEventListener("input", filterHomeProducts);
 
         themeToggle.addEventListener("click", () => {
             const next = document.body.getAttribute("data-theme") === "dusk" ? "light" : "dusk";
@@ -919,6 +1087,8 @@
         });
 
         document.getElementById("yearLabel").textContent = new Date().getFullYear();
+        hideLegacyHomeSections();
+        renderHomeProducts(homeProducts);
         syncAuthUi();
     </script>
 </body>
