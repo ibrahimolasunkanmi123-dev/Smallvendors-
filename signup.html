@@ -41,10 +41,6 @@
                 
                 <div>
                     <label for="userType" class="block text-sm font-medium text-gray-700">Account Type</label>
-                    <div class="mt-2 grid grid-cols-2 gap-2">
-                        <button id="customerTypeBtn" type="button" class="px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-semibold text-gray-700">Customer</button>
-                        <button id="vendorTypeBtn" type="button" class="px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-semibold text-gray-700">Vendor</button>
-                    </div>
                     <select id="userType" name="userType" required 
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                         <option value="">Select account type</option>
@@ -124,16 +120,11 @@
         const BUILD_VERSION = '2026-03-08-db-id-fix-1';
         console.log('SmallVendors signup build:', BUILD_VERSION);
         const userTypeSelect = document.getElementById('userType');
-        const customerTypeBtn = document.getElementById('customerTypeBtn');
-        const vendorTypeBtn = document.getElementById('vendorTypeBtn');
         const businessNameGroup = document.getElementById('businessNameGroup');
         const businessNameInput = document.getElementById('businessName');
 
         function updateUserTypeButtons() {
             const isVendor = userTypeSelect.value === 'vendor';
-            const isBuyer = userTypeSelect.value === 'buyer';
-            customerTypeBtn.className = `px-3 py-2 rounded-md border text-sm font-semibold ${isBuyer ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700'}`;
-            vendorTypeBtn.className = `px-3 py-2 rounded-md border text-sm font-semibold ${isVendor ? 'border-green-600 bg-green-50 text-green-700' : 'border-gray-300 bg-white text-gray-700'}`;
             businessNameGroup.classList.toggle('hidden', !isVendor);
             if (isVendor) {
                 businessNameInput.setAttribute('required', 'required');
@@ -142,16 +133,6 @@
                 businessNameInput.value = '';
             }
         }
-
-        customerTypeBtn.addEventListener('click', () => {
-            userTypeSelect.value = 'buyer';
-            updateUserTypeButtons();
-        });
-
-        vendorTypeBtn.addEventListener('click', () => {
-            userTypeSelect.value = 'vendor';
-            updateUserTypeButtons();
-        });
 
         userTypeSelect.addEventListener('change', updateUserTypeButtons);
         updateUserTypeButtons();
