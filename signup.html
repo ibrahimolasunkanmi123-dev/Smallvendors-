@@ -114,7 +114,7 @@
             .setProject('699b21ef002b28b002d7');
         const account = new Account(client);
         const databases = new Databases(client);
-        const DATABASE_ID = 'smallvendors-db';
+        const DATABASE_IDS = ['smallvendors-db', 'smallvendors'];
         const USERS_COLLECTION_ID = 'users';
         const VENDORS_COLLECTION_ID = 'vendors';
         const BUILD_VERSION = '2026-03-07-signup-fix-2';
@@ -128,6 +128,18 @@
                 return account.createEmailSession(email, password);
             }
             throw new Error('Appwrite session method not available in loaded SDK version.');
+        }
+
+        async function createDocumentWithDatabaseFallback(collectionId, documentId, data, permissions) {
+            let lastError = null;
+            for (const dbId of DATABASE_IDS) {
+                try {
+                    return await databases.createDocument(dbId, collectionId, documentId, data, permissions);
+                } catch (err) {
+                    lastError = err;
+                }
+            }
+            throw lastError || new Error(`Failed to create ${collectionId} document.`);
         }
 
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
@@ -176,8 +188,7 @@
                 const normalizedUserType = userType === 'vendor' ? 'vendor' : 'buyer';
                 const user = await account.create(ID.unique(), email, password, name);
                 await createSession(email, password);
-                const userDoc = await databases.createDocument(
-                    DATABASE_ID,
+                const userDoc = await createDocumentWithDatabaseFallback(
                     USERS_COLLECTION_ID,
                     user.$id,
                     {
@@ -201,8 +212,7 @@
                 }
 
                 if (normalizedUserType === 'vendor') {
-                    const vendorDoc = await databases.createDocument(
-                        DATABASE_ID,
+                    const vendorDoc = await createDocumentWithDatabaseFallback(
                         VENDORS_COLLECTION_ID,
                         ID.unique(),
                         {
