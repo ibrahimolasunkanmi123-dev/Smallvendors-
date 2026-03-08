@@ -136,6 +136,49 @@
 
     .cart strong { color: var(--brand); }
 
+    .account-menu-wrap {
+      position: relative;
+    }
+
+    .account-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 320px;
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 20px 36px rgba(16, 24, 40, 0.2);
+      padding: 12px;
+      display: none;
+      z-index: 20;
+    }
+
+    .account-menu.open { display: block; }
+
+    .account-menu h4 {
+      margin: 2px 8px 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .account-list {
+      display: grid;
+      gap: 4px;
+    }
+
+    .account-list a {
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .account-list a:hover {
+      background: #f3f6fb;
+    }
+
     .subnav {
       background: var(--nav-soft);
       color: #f3f6ff;
@@ -352,7 +395,24 @@
 
       <div class="lang"><strong>EN</strong></div>
 
-      <a id="accountLink" class="header-card" href="login.html">Hello, sign in<strong>Account & Lists</strong></a>
+      <div class="account-menu-wrap" id="accountMenuWrap">
+        <a id="accountLink" class="header-card" href="login.html">Hello, sign in<strong>Account & Lists</strong></a>
+        <div id="accountMenu" class="account-menu">
+          <h4>Your Account</h4>
+          <div class="account-list">
+            <a href="#">Account</a>
+            <a href="#">Orders</a>
+            <a href="#">Recommendations</a>
+            <a href="#">Browsing History</a>
+            <a href="#">Your Shopping preferences</a>
+            <a href="#">Watchlist</a>
+            <a href="#">Video Purchases & Rentals</a>
+            <a href="#">Kindle Unlimited</a>
+            <a href="#">Content & Devices</a>
+            <a href="#">Subscribe & Save Items</a>
+          </div>
+        </div>
+      </div>
 
       <a class="header-card" href="#profile">Returns<strong>& Orders</strong></a>
 
@@ -443,6 +503,8 @@
     const profilePanel = document.getElementById('profilePanel');
     const profileTitle = document.getElementById('profileTitle');
     const accountLink = document.getElementById('accountLink');
+    const accountMenuWrap = document.getElementById('accountMenuWrap');
+    const accountMenu = document.getElementById('accountMenu');
     const signupNav = document.getElementById('signupNav');
     const loginNav = document.getElementById('loginNav');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -511,6 +573,27 @@
         loginNav.style.display = 'inline-block';
       }
     }
+
+    accountLink.addEventListener('click', (event) => {
+      if (accountLink.getAttribute('href') === '#profile') {
+        event.preventDefault();
+      }
+      accountMenu.classList.toggle('open');
+    });
+
+    accountMenuWrap.addEventListener('mouseenter', () => {
+      accountMenu.classList.add('open');
+    });
+
+    accountMenuWrap.addEventListener('mouseleave', () => {
+      accountMenu.classList.remove('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!accountMenuWrap.contains(event.target)) {
+        accountMenu.classList.remove('open');
+      }
+    });
 
     logoutBtn.addEventListener('click', async () => {
       try {
