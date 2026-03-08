@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketplace - SmallVendors</title>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
@@ -49,6 +50,26 @@
             height: 42px;
             border-radius: 12px;
             cursor: pointer;
+        }
+
+        .auth-pill {
+            border: 1px solid var(--m-line);
+            border-radius: 999px;
+            padding: 8px 12px;
+            color: var(--m-muted);
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            border: 1px solid var(--m-line);
+            background: var(--m-surface);
+            color: var(--m-ink);
+            border-radius: 999px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
         }
 
         .marketplace-header {
@@ -312,8 +333,10 @@
             <div class="nav-links" id="navLinks">
                 <a href="index.html">Home</a>
                 <a href="marketplace.html">Marketplace</a>
-                <a href="signup.html">Sign Up</a>
-                <a href="login.html" class="btn btn-primary" style="padding:8px 16px;">Login</a>
+                <a id="signupLink" href="signup.html">Sign Up</a>
+                <a id="loginLink" href="login.html" class="btn btn-primary" style="padding:8px 16px;">Login</a>
+                <span id="authPill" class="auth-pill" style="display:none;"></span>
+                <button id="logoutBtn" type="button" class="logout-btn" style="display:none;">Logout</button>
                 <button type="button" class="theme-btn" id="themeToggle" aria-label="Toggle theme">D</button>
             </div>
         </div>
@@ -388,6 +411,12 @@
     </footer>
 
     <script>
+        const { Client, Account } = Appwrite;
+        const authClient = new Client()
+            .setEndpoint('https://nyc.cloud.appwrite.io/v1')
+            .setProject('699b21ef002b28b002d7');
+        const account = new Account(authClient);
+
         const products = [
             { id: 1, icon: "FD", name: "Artisan Pizza", desc: "Fresh handmade pizza with organic ingredients.", price: 15.99, vendor: "Joe's Pizzeria", category: "food" },
             { id: 2, icon: "FS", name: "Cotton T-Shirt", desc: "Premium quality cotton with modern fits.", price: 24.99, vendor: "Fashion Hub", category: "fashion" },
@@ -581,6 +610,35 @@
         const navToggle = document.getElementById("navToggle");
         const navLinks = document.getElementById("navLinks");
         const themeToggle = document.getElementById("themeToggle");
+        const loginLink = document.getElementById("loginLink");
+        const signupLink = document.getElementById("signupLink");
+        const authPill = document.getElementById("authPill");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        async function syncAuthUi() {
+            try {
+                const user = await account.get();
+                const displayName = user.name || user.email || "User";
+                loginLink.style.display = "none";
+                signupLink.style.display = "none";
+                authPill.style.display = "inline-block";
+                logoutBtn.style.display = "inline-block";
+                authPill.textContent = displayName;
+            } catch (_) {
+                loginLink.style.display = "inline-block";
+                signupLink.style.display = "inline-block";
+                authPill.style.display = "none";
+                logoutBtn.style.display = "none";
+            }
+        }
+
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                await account.deleteSession("current");
+            } catch (_) {}
+            window.location.replace("index.html");
+        });
+
         if (localStorage.getItem("sv-theme") === "dusk") {
             document.body.setAttribute("data-theme", "dusk");
         }
@@ -595,6 +653,7 @@
             localStorage.setItem("sv-theme", next);
         });
         window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 6));
+        syncAuthUi();
     </script>
 </body>
 </html>

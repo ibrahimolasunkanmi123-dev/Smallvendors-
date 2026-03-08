@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmallVendors - Local Commerce Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
@@ -53,6 +54,40 @@
             border-radius: 12px;
             cursor: pointer;
             font-size: 16px;
+        }
+
+        .auth-pill {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 8px 12px;
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--ink);
+            border-radius: 999px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .profile-spotlight {
+            display: none;
+            padding: 22px 20px 8px;
+        }
+
+        .profile-card {
+            max-width: 860px;
+            margin: 0 auto;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+            padding: 18px;
         }
 
         .hero {
@@ -477,12 +512,22 @@
                 <a href="#features">Features</a>
                 <a href="#faq">FAQ</a>
                 <a href="marketplace.html">Marketplace</a>
-                <a href="login.html">Login</a>
-                <a href="signup.html" class="btn btn-secondary" style="padding: 8px 20px;">Sign Up</a>
+                <a id="loginLink" href="login.html">Login</a>
+                <a id="signupLink" href="signup.html" class="btn btn-secondary" style="padding: 8px 20px;">Sign Up</a>
+                <a id="profileNavLink" href="#profile" style="display:none;">Profile</a>
+                <span id="authPill" class="auth-pill" style="display:none;"></span>
+                <button id="logoutBtn" type="button" class="logout-btn" style="display:none;">Logout</button>
                 <button type="button" class="theme-btn" id="themeToggle" aria-label="Toggle theme">D</button>
             </div>
         </div>
     </nav>
+
+    <section id="profile" class="profile-spotlight">
+        <div class="profile-card">
+            <h3 style="margin-bottom:8px;">Welcome back</h3>
+            <p id="profileSummary" style="color:var(--muted);">Your account is active.</p>
+        </div>
+    </section>
 
     <section class="hero reveal">
         <div class="container hero-wrap">
@@ -687,11 +732,24 @@
     <button type="button" class="back-top" id="backTop" aria-label="Back to top">Top</button>
 
     <script>
+        const { Client, Account } = Appwrite;
+        const authClient = new Client()
+            .setEndpoint('https://nyc.cloud.appwrite.io/v1')
+            .setProject('699b21ef002b28b002d7');
+        const account = new Account(authClient);
+
         const nav = document.getElementById("siteNav");
         const navToggle = document.getElementById("navToggle");
         const navLinks = document.getElementById("navLinks");
         const themeToggle = document.getElementById("themeToggle");
         const backTop = document.getElementById("backTop");
+        const loginLink = document.getElementById("loginLink");
+        const signupLink = document.getElementById("signupLink");
+        const profileNavLink = document.getElementById("profileNavLink");
+        const authPill = document.getElementById("authPill");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const profileSpotlight = document.getElementById("profile");
+        const profileSummary = document.getElementById("profileSummary");
         const prefersDusk = localStorage.getItem("sv-theme") === "dusk";
 
         if (prefersDusk) {
@@ -700,6 +758,35 @@
 
         navToggle.addEventListener("click", () => {
             navLinks.classList.toggle("open");
+        });
+
+        async function syncAuthUi() {
+            try {
+                const user = await account.get();
+                const displayName = user.name || user.email || "User";
+                loginLink.style.display = "none";
+                signupLink.style.display = "none";
+                profileNavLink.style.display = "inline-block";
+                authPill.style.display = "inline-block";
+                logoutBtn.style.display = "inline-block";
+                authPill.textContent = displayName;
+                profileSpotlight.style.display = "block";
+                profileSummary.textContent = `Signed in as ${displayName}.`;
+            } catch (_) {
+                loginLink.style.display = "inline-block";
+                signupLink.style.display = "inline-block";
+                profileNavLink.style.display = "none";
+                authPill.style.display = "none";
+                logoutBtn.style.display = "none";
+                profileSpotlight.style.display = "none";
+            }
+        }
+
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                await account.deleteSession("current");
+            } catch (_) {}
+            window.location.replace("index.html");
         });
 
         themeToggle.addEventListener("click", () => {
@@ -832,6 +919,7 @@
         });
 
         document.getElementById("yearLabel").textContent = new Date().getFullYear();
+        syncAuthUi();
     </script>
 </body>
 </html>
