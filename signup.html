@@ -184,10 +184,14 @@
             
             showMessage('Creating account...', 'info');
             
+            let step = 'starting';
             try {
                 const normalizedUserType = userType === 'vendor' ? 'vendor' : 'buyer';
+                step = 'create_auth_user';
                 const user = await account.create(ID.unique(), email, password, name);
+                step = 'create_session';
                 await createSession(email, password);
+                step = 'insert_users_row';
                 const userDoc = await createDocumentWithDatabaseFallback(
                     USERS_COLLECTION_ID,
                     user.$id,
@@ -212,6 +216,7 @@
                 }
 
                 if (normalizedUserType === 'vendor') {
+                    step = 'insert_vendors_row';
                     const vendorDoc = await createDocumentWithDatabaseFallback(
                         VENDORS_COLLECTION_ID,
                         ID.unique(),
@@ -241,7 +246,10 @@
                 window.location.replace('index.html');
             } catch (error) {
                 console.error('Signup flow error:', error);
-                showMessage(error.message || 'Registration failed', 'error');
+                const details = error && typeof error === 'object'
+                    ? `${error.message || 'Registration failed'} [step: ${step}] (code: ${error.code || 'n/a'}, type: ${error.type || 'n/a'})`
+                    : 'Registration failed';
+                showMessage(details, 'error');
             }
         });
         
