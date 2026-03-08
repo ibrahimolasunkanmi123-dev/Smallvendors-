@@ -6,7 +6,7 @@ import '../models/buyer.dart';
 class AppwriteService {
   static const String endpoint = String.fromEnvironment(
     'APPWRITE_ENDPOINT',
-    defaultValue: 'https://cloud.appwrite.io/v1',
+    defaultValue: 'https://nyc.cloud.appwrite.io/v1',
   );
   static const String projectId = String.fromEnvironment(
     'APPWRITE_PROJECT_ID',
