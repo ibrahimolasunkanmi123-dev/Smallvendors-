@@ -159,6 +159,10 @@
     }
 
     .account-menu.open { display: block; }
+    .account-menu-wrap:hover .account-menu,
+    .account-menu-wrap:focus-within .account-menu {
+      display: block;
+    }
 
     .account-menu h4 {
       margin: 2px 8px 8px;
@@ -918,11 +922,24 @@
       }
     }
 
+    async function logoutUser() {
+      try {
+        await account.deleteSession('current');
+      } catch (_) {
+        try {
+          await account.deleteSessions();
+        } catch (_) {}
+      } finally {
+        localStorage.removeItem('sv-watchlist');
+        localStorage.removeItem('sv-browsing-history');
+        localStorage.removeItem('sv-preferred-department');
+        window.location.replace('login.html');
+      }
+    }
+
     function handleFeatureAction(featureKey) {
       if (featureKey === 'logout') {
-        account.deleteSession('current')
-          .catch(() => {})
-          .finally(() => window.location.replace('index.html'));
+        logoutUser();
         return;
       }
       if (featureKey === 'post_products') {
@@ -1182,17 +1199,9 @@
     accountLink.addEventListener('click', (event) => {
       if (accountLink.getAttribute('href') === '#') {
         event.preventDefault();
-        accountMenu.classList.remove('open');
+        profileMenu.classList.remove('open');
+        accountMenu.classList.toggle('open');
       }
-      accountMenu.classList.toggle('open');
-    });
-
-    accountMenuWrap.addEventListener('mouseenter', () => {
-      accountMenu.classList.add('open');
-    });
-
-    accountMenuWrap.addEventListener('mouseleave', () => {
-      accountMenu.classList.remove('open');
     });
 
     accountMenuLinks.forEach((link) => {
@@ -1216,18 +1225,9 @@
     profileMenuLink.addEventListener('click', (event) => {
       if (profileMenuLink.getAttribute('href') === '#') {
         event.preventDefault();
+        accountMenu.classList.remove('open');
         profileMenu.classList.toggle('open');
       }
-    });
-
-    profileMenuWrap.addEventListener('mouseenter', () => {
-      if (profileMenuLink.getAttribute('href') === '#') {
-        profileMenu.classList.add('open');
-      }
-    });
-
-    profileMenuWrap.addEventListener('mouseleave', () => {
-      profileMenu.classList.remove('open');
     });
 
     profileMenuLinks.forEach((link) => {
@@ -1240,6 +1240,12 @@
     });
     closeAccountTaskBtn.addEventListener('click', () => {
       accountTaskPanel.style.display = 'none';
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        accountMenu.classList.remove('open');
+        profileMenu.classList.remove('open');
+      }
     });
 
     [postName, postCategory, postPrice, postImageUrl, postDescription].forEach((el) => {
