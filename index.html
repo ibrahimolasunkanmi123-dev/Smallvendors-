@@ -398,18 +398,13 @@
       <div class="account-menu-wrap" id="accountMenuWrap">
         <a id="accountLink" class="header-card" href="login.html">Hello, sign in<strong>Account & Lists</strong></a>
         <div id="accountMenu" class="account-menu">
-          <h4>Your Account</h4>
+          <h4>Profile Menu</h4>
           <div class="account-list">
-            <a href="#">Account</a>
-            <a href="#">Orders</a>
-            <a href="#">Recommendations</a>
-            <a href="#">Browsing History</a>
-            <a href="#">Your Shopping preferences</a>
-            <a href="#">Watchlist</a>
-            <a href="#">Video Purchases & Rentals</a>
-            <a href="#">Kindle Unlimited</a>
-            <a href="#">Content & Devices</a>
-            <a href="#">Subscribe & Save Items</a>
+            <a href=\"#\" data-menu-feature=\"post_products\">Posting Products</a>
+            <a href=\"#\" data-menu-feature=\"payment_options\">Payment Options</a>
+            <a href=\"#\" data-menu-feature=\"live_chat\">Live Chat</a>
+            <a href=\"#\" data-menu-feature=\"help_center\">Help Center</a>
+            <a href=\"#\" data-menu-feature=\"logout\">Logout</a>
           </div>
         </div>
       </div>
@@ -511,6 +506,7 @@
     const signupNav = document.getElementById('signupNav');
     const loginNav = document.getElementById('loginNav');
     const profileActions = document.querySelector('.profile-actions');
+    const accountMenuLinks = document.querySelectorAll('[data-menu-feature]');
 
     function render(items) {
       productsGrid.innerHTML = '';
@@ -557,16 +553,20 @@
       { key: 'help_center', label: 'Help Center' }
     ];
 
+    function handleFeatureAction(featureKey) {
+      if (featureKey === 'logout') {
+        account.deleteSession('current')
+          .catch(() => {})
+          .finally(() => window.location.replace('index.html'));
+        return;
+      }
+      localStorage.setItem('sv-profile-feature', featureKey);
+      window.location.href = 'marketplace.html';
+    }
+
     function attachFeatureAction(button, featureKey) {
       button.addEventListener('click', () => {
-        if (featureKey === 'logout') {
-          account.deleteSession('current')
-            .catch(() => {})
-            .finally(() => window.location.replace('index.html'));
-          return;
-        }
-        localStorage.setItem('sv-profile-feature', featureKey);
-        window.location.href = 'marketplace.html';
+        handleFeatureAction(featureKey);
       });
     }
 
@@ -574,9 +574,7 @@
       const isVendor = userType === 'vendor';
       const features = PROFILE_FEATURES;
       profileActions.innerHTML = '';
-      profileSub.textContent = isVendor
-        ? 'Vendor tools and actions are ready.'
-        : 'Profile tools and support options are ready.';
+      profileSub.textContent = 'Profile actions are available in Account & Lists menu.';
 
       for (const feature of features) {
         const button = document.createElement('button');
@@ -681,6 +679,15 @@
       if (!accountMenuWrap.contains(event.target)) {
         accountMenu.classList.remove('open');
       }
+    });
+
+    accountMenuLinks.forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const featureKey = link.getAttribute('data-menu-feature');
+        accountMenu.classList.remove('open');
+        handleFeatureAction(featureKey);
+      });
     });
 
     render(products);
