@@ -176,6 +176,37 @@
             gap: 8px;
         }
 
+        .market-action-banner {
+            margin-top: 10px;
+            border: 1px solid rgba(15, 118, 110, 0.34);
+            background: rgba(15, 118, 110, 0.09);
+            color: var(--m-ink);
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .market-action-banner.warning {
+            border-color: rgba(202, 138, 4, 0.38);
+            background: rgba(234, 179, 8, 0.14);
+        }
+
+        .market-action-close {
+            border: 1px solid var(--m-line);
+            border-radius: 999px;
+            background: var(--m-surface);
+            color: var(--m-muted);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 9px;
+            cursor: pointer;
+        }
+
         .filter-pill {
             border: 1px solid var(--m-line);
             border-radius: 999px;
@@ -393,6 +424,10 @@
                 </div>
             </div>
             <div class="active-filters" id="activeFilters"></div>
+            <div class="market-action-banner" id="marketActionBanner">
+                <span id="marketActionText"></span>
+                <button type="button" class="market-action-close" id="marketActionClose">Dismiss</button>
+            </div>
         </section>
 
         <section class="products-grid grid" id="productsGrid"></section>
@@ -439,10 +474,14 @@
         const activeFilters = document.getElementById("activeFilters");
         const quickChips = document.querySelectorAll(".quick-chip");
         const viewToggles = document.querySelectorAll(".view-toggle");
+        const marketActionBanner = document.getElementById("marketActionBanner");
+        const marketActionText = document.getElementById("marketActionText");
+        const marketActionClose = document.getElementById("marketActionClose");
 
         const savedFavorites = new Set(JSON.parse(localStorage.getItem("sv-favorites") || "[]"));
         const savedFilters = JSON.parse(localStorage.getItem("sv-market-filters") || "{}");
         const savedView = localStorage.getItem("sv-market-view") || "grid";
+        let activeAccountFeature = "";
 
         function mapCategoryName(category) {
             const map = {
@@ -500,7 +539,16 @@
             if (query) parts.push(`Search: ${query}`);
             if (category) parts.push(`Category: ${mapCategoryName(category)}`);
             if (priceBand) parts.push(`Price: ${priceBand}`);
+            if (activeAccountFeature === "watchlist") parts.push("Mode: Watchlist");
+            if (activeAccountFeature === "verified_sellers") parts.push("Mode: Verified sellers");
             activeFilters.innerHTML = parts.map((part) => `<span class="filter-pill">${part}</span>`).join("");
+        }
+
+        function showMarketAction(text, tone = "info") {
+            if (!text) return;
+            marketActionText.textContent = text;
+            marketActionBanner.classList.toggle("warning", tone === "warning");
+            marketActionBanner.style.display = "flex";
         }
 
         function renderProducts(items) {
@@ -551,6 +599,13 @@
                 return (!query || searchable.includes(query)) && (!category || item.category === category) && filterByPrice(item, priceBand);
             });
 
+            if (activeAccountFeature === "watchlist") {
+                filtered = filtered.filter((item) => savedFavorites.has(item.id));
+            }
+            if (activeAccountFeature === "verified_sellers") {
+                filtered = filtered.filter((item) => item.vendor.toLowerCase().includes("artisan") || item.vendor.toLowerCase().includes("joe"));
+            }
+
             if (sortBy === "price-asc") filtered.sort((a, b) => a.price - b.price);
             if (sortBy === "price-desc") filtered.sort((a, b) => b.price - a.price);
             if (sortBy === "name-asc") filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -559,6 +614,59 @@
             renderActiveFilters(query, category, priceBand);
             renderProducts(filtered);
             saveFilters();
+        }
+
+        function runStartupMarketplaceFeature() {
+            const accountFeature = localStorage.getItem("sv-account-feature") || "";
+            const profileFeature = localStorage.getItem("sv-profile-feature") || "";
+            const toastMessage = localStorage.getItem("sv-account-toast") || "";
+
+            localStorage.removeItem("sv-account-feature");
+            localStorage.removeItem("sv-profile-feature");
+            localStorage.removeItem("sv-account-toast");
+
+            const feature = accountFeature || profileFeature;
+            if (!feature && !toastMessage) return;
+
+            const messages = {
+                orders: "Orders view opened. You can sort and browse recent purchase items.",
+                recommendations: "Recommendations view opened for you.",
+                browsing_history: "Browsing history view opened.",
+                shopping_preferences: "Shopping preferences loaded.",
+                watchlist: "Watchlist loaded from your saved products.",
+                video_purchases: "Video purchases and rentals opened.",
+                kindle_unlimited: "Kindle Unlimited section opened.",
+                content_devices: "Content and devices section opened.",
+                subscribe_save: "Subscribe and Save items opened.",
+                verified_sellers: "Verified seller filter applied."
+            };
+
+            activeAccountFeature = feature;
+            if (feature === "orders") {
+                sortFilter.value = "price-desc";
+            } else if (feature === "recommendations") {
+                sortFilter.value = "featured";
+                priceFilter.value = "mid";
+            } else if (feature === "browsing_history") {
+                sortFilter.value = "name-asc";
+            } else if (feature === "shopping_preferences") {
+                categoryFilter.value = savedFilters.category || "";
+                priceFilter.value = savedFilters.price || "";
+            } else if (feature === "watchlist") {
+                sortFilter.value = "name-asc";
+            } else if (feature === "video_purchases" || feature === "content_devices") {
+                categoryFilter.value = "electronics";
+            } else if (feature === "kindle_unlimited") {
+                categoryFilter.value = "home";
+                sortFilter.value = "featured";
+            } else if (feature === "subscribe_save") {
+                categoryFilter.value = "food";
+            } else if (feature === "verified_sellers") {
+                sortFilter.value = "featured";
+            }
+
+            const bannerText = toastMessage || messages[feature] || "Account section opened.";
+            showMarketAction(bannerText, feature === "watchlist" && savedFavorites.size === 0 ? "warning" : "info");
         }
 
         searchInput.addEventListener("input", applyFilters);
@@ -587,8 +695,13 @@
             categoryFilter.value = "";
             priceFilter.value = "";
             sortFilter.value = "featured";
+            activeAccountFeature = "";
             setActiveChip("all");
             applyFilters();
+        });
+
+        marketActionClose.addEventListener("click", () => {
+            marketActionBanner.style.display = "none";
         });
 
         if (savedFilters.query) searchInput.value = savedFilters.query;
@@ -597,6 +710,8 @@
         if (savedFilters.sort) sortFilter.value = savedFilters.sort;
         setActiveChip(categoryFilter.value || "all");
         setView(savedView);
+        runStartupMarketplaceFeature();
+        setActiveChip(categoryFilter.value || "all");
         applyFilters();
 
         document.addEventListener("keydown", (event) => {
