@@ -137,13 +137,22 @@
     .cart strong { color: var(--brand); }
     .cart {
       display: inline-flex;
+      flex-direction: row;
       align-items: center;
       gap: 6px;
       white-space: nowrap;
+      min-width: max-content;
+      justify-self: start;
     }
     .cart strong {
       display: inline;
       margin-top: 0;
+    }
+    .cart * {
+      white-space: nowrap;
+    }
+    .cart br {
+      display: none;
     }
     .cart-count {
       color: var(--brand);
