@@ -118,15 +118,13 @@
     }
 
     .lang,
-    .header-card,
-    .cart {
+    .header-card {
       font-size: 12px;
       color: #d2ddf1;
       line-height: 1.2;
     }
 
     .header-card strong,
-    .cart strong,
     .lang strong {
       display: block;
       color: #fff;
@@ -134,36 +132,20 @@
       margin-top: 2px;
     }
 
-    .cart strong { color: var(--brand); }
-    .cart {
+    .cart-inline {
       display: inline-flex;
-      flex-direction: row;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       white-space: nowrap;
-      min-width: max-content;
-      justify-self: start;
-    }
-    .cart strong {
-      display: inline;
-      margin-top: 0;
-    }
-    .cart * {
-      white-space: nowrap;
-    }
-    .cart br {
-      display: none;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
     }
     .cart-count {
       color: var(--brand);
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 800;
-      line-height: 1;
-    }
-    .cart-label {
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
       line-height: 1;
     }
 
@@ -644,7 +626,7 @@
 
       <a class="header-card" href="#profile">Returns<strong>& Orders</strong></a>
 
-      <a class="cart" href="#"><span class="cart-count">0</span><span class="cart-label">Cart</span></a>
+      <a class="header-card cart-inline" href="#"><span class="cart-count">0</span><span>Cart</span></a>
     </div>
   </header>
 
