@@ -890,6 +890,116 @@
       setTimeout(() => featureToast.classList.remove('show'), 2400);
     }
 
+    function openTaskPanel(title, description, list = [], actions = []) {
+      accountTaskTitle.textContent = title;
+      accountTaskDesc.textContent = description;
+      accountTaskList.innerHTML = list.map((item) => `<div>${item}</div>`).join('');
+      accountTaskActions.innerHTML = '';
+      for (const action of actions) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'small-btn';
+        btn.textContent = action.label;
+        btn.addEventListener('click', action.onClick);
+        accountTaskActions.appendChild(btn);
+      }
+      accountTaskPanel.style.display = 'block';
+      accountTaskPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function readPaymentMethods() {
+      return JSON.parse(localStorage.getItem('sv-payment-methods') || '[]');
+    }
+
+    function writePaymentMethods(methods) {
+      localStorage.setItem('sv-payment-methods', JSON.stringify(methods));
+    }
+
+    function renderPaymentOptionsPanel() {
+      const methods = readPaymentMethods();
+      const rows = methods.length
+        ? methods.map((method, index) => {
+            const defaultLabel = method.isDefault ? ' (Default)' : '';
+            return `${method.type}: ${method.label}${defaultLabel}`;
+          })
+        : ['No payment methods saved yet.'];
+
+      const actions = [
+        {
+          label: 'Add Card',
+          onClick: () => {
+            const last4 = prompt('Enter last 4 digits for the new card (e.g. 4242):', '');
+            if (!last4 || !/^[0-9]{4}$/.test(last4.trim())) {
+              showToast('Card was not added.');
+              return;
+            }
+            const updated = readPaymentMethods();
+            updated.push({
+              type: 'Card',
+              label: `**** ${last4.trim()}`,
+              isDefault: updated.length === 0
+            });
+            writePaymentMethods(updated);
+            showToast('Card payment method saved.');
+            renderPaymentOptionsPanel();
+          }
+        },
+        {
+          label: 'Set Default',
+          onClick: () => {
+            const updated = readPaymentMethods();
+            if (!updated.length) {
+              showToast('Add a payment method first.');
+              return;
+            }
+            const choice = prompt(`Select default method number (1-${updated.length}):`, '1');
+            const index = Number(choice) - 1;
+            if (!Number.isInteger(index) || index < 0 || index >= updated.length) {
+              showToast('Invalid selection.');
+              return;
+            }
+            for (let i = 0; i < updated.length; i += 1) {
+              updated[i].isDefault = i === index;
+            }
+            writePaymentMethods(updated);
+            showToast('Default payment method updated.');
+            renderPaymentOptionsPanel();
+          }
+        },
+        {
+          label: 'Remove Method',
+          onClick: () => {
+            const updated = readPaymentMethods();
+            if (!updated.length) {
+              showToast('No payment method to remove.');
+              return;
+            }
+            const choice = prompt(`Remove method number (1-${updated.length}):`, `${updated.length}`);
+            const index = Number(choice) - 1;
+            if (!Number.isInteger(index) || index < 0 || index >= updated.length) {
+              showToast('Invalid selection.');
+              return;
+            }
+            const removedWasDefault = updated[index].isDefault;
+            updated.splice(index, 1);
+            if (removedWasDefault && updated.length) {
+              updated[0].isDefault = true;
+            }
+            writePaymentMethods(updated);
+            showToast('Payment method removed.');
+            renderPaymentOptionsPanel();
+          }
+        }
+      ];
+
+      openTaskPanel(
+        'Payment Options',
+        'Manage your saved payment methods.',
+        rows.map((row, idx) => `${idx + 1}. ${row}`),
+        actions
+      );
+    }
+
     function closePostProductModal() {
       postProductModalBackdrop.style.display = 'none';
     }
@@ -955,28 +1065,31 @@
         openPostProductModal();
         return;
       }
+      if (featureKey === 'payment_options') {
+        renderPaymentOptionsPanel();
+        return;
+      }
+      if (featureKey === 'live_chat') {
+        openTaskPanel(
+          'Live Chat',
+          'Chat support is available for account and order help.',
+          ['Average response time: under 2 minutes', 'Support hours: 24/7']
+        );
+        return;
+      }
+      if (featureKey === 'help_center') {
+        openTaskPanel(
+          'Help Center',
+          'Browse common help topics and account guides.',
+          ['Account setup', 'Order and returns', 'Security and privacy']
+        );
+        return;
+      }
       localStorage.setItem('sv-profile-feature', featureKey);
       window.location.href = 'marketplace.html';
     }
 
     function handleAccountAction(featureKey) {
-      const openTaskPanel = (title, description, list = [], actions = []) => {
-        accountTaskTitle.textContent = title;
-        accountTaskDesc.textContent = description;
-        accountTaskList.innerHTML = list.map((item) => `<div>${item}</div>`).join('');
-        accountTaskActions.innerHTML = '';
-        for (const action of actions) {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'small-btn';
-          btn.textContent = action.label;
-          btn.addEventListener('click', action.onClick);
-          accountTaskActions.appendChild(btn);
-        }
-        accountTaskPanel.style.display = 'block';
-        accountTaskPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      };
-
       if (featureKey === 'account') {
         profileMenu.classList.add('open');
         showToast('Profile menu opened.');
