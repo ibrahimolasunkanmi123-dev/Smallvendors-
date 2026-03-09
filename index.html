@@ -550,19 +550,7 @@
     departmentSelect.addEventListener('change', filterProducts);
     globalSearchBtn.addEventListener('click', filterProducts);
 
-    const CUSTOMER_FEATURES = [
-      { key: 'logout', label: 'Logout' },
-      { key: 'place_order', label: 'Place and Order' },
-      { key: 'payment_options', label: 'Payment Options' },
-      { key: 'track_order', label: 'Track and Order' },
-      { key: 'cancel_order', label: 'Cancel an Order' },
-      { key: 'returns_refunds', label: 'Returns and Refunds' },
-      { key: 'cache_preferences', label: 'Cache Preferences' },
-      { key: 'live_chat', label: 'Live Chat' },
-      { key: 'help_center', label: 'Help Center' }
-    ];
-
-    const VENDOR_FEATURES = [
+    const PROFILE_FEATURES = [
       { key: 'post_products', label: 'Posting Products' },
       { key: 'payment_options', label: 'Payment Options' },
       { key: 'live_chat', label: 'Live Chat' },
@@ -584,11 +572,11 @@
 
     function renderRoleFeatures(userType) {
       const isVendor = userType === 'vendor';
-      const features = isVendor ? VENDOR_FEATURES : CUSTOMER_FEATURES;
+      const features = PROFILE_FEATURES;
       profileActions.innerHTML = '';
       profileSub.textContent = isVendor
         ? 'Vendor tools and actions are ready.'
-        : 'Customer actions and support tools are ready.';
+        : 'Profile tools and support options are ready.';
 
       for (const feature of features) {
         const button = document.createElement('button');
@@ -611,6 +599,36 @@
       throw lastError;
     }
 
+    async function createUserProfileDocument(user) {
+      let lastError = null;
+      for (const dbId of DATABASE_IDS) {
+        try {
+          return await databases.createDocument(
+            dbId,
+            USERS_COLLECTION_ID,
+            user.$id,
+            {
+              name: user.name || (user.email ? user.email.split('@')[0] : 'User'),
+              email: user.email || '',
+              userType: 'buyer',
+              phone: null,
+              address: null,
+              createdAt: new Date().toISOString(),
+              lastLogin: new Date().toISOString()
+            },
+            [
+              `read("user:${user.$id}")`,
+              `update("user:${user.$id}")`,
+              `delete("user:${user.$id}")`
+            ]
+          );
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError;
+    }
+
     async function syncAuthUi() {
       try {
         const user = await account.get();
@@ -622,7 +640,12 @@
         signupNav.style.display = 'none';
         loginNav.style.display = 'none';
         try {
-          const profileDoc = await getUserProfileDocument(user.$id);
+          let profileDoc;
+          try {
+            profileDoc = await getUserProfileDocument(user.$id);
+          } catch (_) {
+            profileDoc = await createUserProfileDocument(user);
+          }
           const userType = profileDoc.userType === 'vendor' ? 'vendor' : 'buyer';
           renderRoleFeatures(userType);
         } catch (_) {
