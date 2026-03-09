@@ -524,16 +524,16 @@
         <div id="accountMenu" class="account-menu">
           <h4>Your Account</h4>
           <div class="account-list">
-            <a href="#">Account</a>
-            <a href="#">Orders</a>
-            <a href="#">Recommendations</a>
-            <a href="#">Browsing History</a>
-            <a href="#">Your Shopping preferences</a>
-            <a href="#">Watchlist</a>
-            <a href="#">Video Purchases & Rentals</a>
-            <a href="#">Kindle Unlimited</a>
-            <a href="#">Content & Devices</a>
-            <a href="#">Subscribe & Save Items</a>
+            <a href="#" data-account-feature="account">Account</a>
+            <a href="#" data-account-feature="orders">Orders</a>
+            <a href="#" data-account-feature="recommendations">Recommendations</a>
+            <a href="#" data-account-feature="browsing_history">Browsing History</a>
+            <a href="#" data-account-feature="shopping_preferences">Your Shopping preferences</a>
+            <a href="#" data-account-feature="watchlist">Watchlist</a>
+            <a href="#" data-account-feature="video_purchases">Video Purchases & Rentals</a>
+            <a href="#" data-account-feature="kindle_unlimited">Kindle Unlimited</a>
+            <a href="#" data-account-feature="content_devices">Content & Devices</a>
+            <a href="#" data-account-feature="subscribe_save">Subscribe & Save Items</a>
           </div>
         </div>
       </div>
@@ -684,6 +684,7 @@
     const accountLink = document.getElementById('accountLink');
     const accountMenuWrap = document.getElementById('accountMenuWrap');
     const accountMenu = document.getElementById('accountMenu');
+    const accountMenuLinks = document.querySelectorAll('[data-account-feature]');
     const profileMenuWrap = document.getElementById('profileMenuWrap');
     const profileMenu = document.getElementById('profileMenu');
     const profileMenuLink = document.getElementById('profileMenuLink');
@@ -811,6 +812,19 @@
       window.location.href = 'marketplace.html';
     }
 
+    function handleAccountAction(featureKey) {
+      if (featureKey === 'account') {
+        profileMenu.classList.add('open');
+        showToast('Profile menu opened.');
+        return;
+      }
+      if (featureKey === 'shopping_preferences') {
+        localStorage.setItem('sv-preferences-open', '1');
+      }
+      localStorage.setItem('sv-account-feature', featureKey);
+      window.location.href = 'marketplace.html';
+    }
+
     async function getUserProfileDocument(userId) {
       let lastError = null;
       for (const dbId of DATABASE_IDS) {
@@ -904,6 +918,15 @@
 
     accountMenuWrap.addEventListener('mouseleave', () => {
       accountMenu.classList.remove('open');
+    });
+
+    accountMenuLinks.forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const featureKey = link.getAttribute('data-account-feature');
+        accountMenu.classList.remove('open');
+        handleAccountAction(featureKey);
+      });
     });
 
     document.addEventListener('click', (event) => {
