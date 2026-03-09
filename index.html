@@ -139,10 +139,23 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
     .cart strong {
       display: inline;
       margin-top: 0;
+    }
+    .cart-count {
+      color: var(--brand);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .cart-label {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
     }
 
     .account-menu-wrap {
@@ -622,7 +635,7 @@
 
       <a class="header-card" href="#profile">Returns<strong>& Orders</strong></a>
 
-      <a class="cart" href="#"><strong>0</strong>Cart</a>
+      <a class="cart" href="#"><span class="cart-count">0</span><span class="cart-label">Cart</span></a>
     </div>
   </header>
 
