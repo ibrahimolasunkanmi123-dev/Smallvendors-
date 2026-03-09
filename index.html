@@ -43,7 +43,7 @@
 
     .topbar-row {
       display: grid;
-      grid-template-columns: 180px 120px minmax(260px, 1fr) 70px 170px 120px 70px;
+      grid-template-columns: 180px 120px minmax(260px, 1fr) 70px 170px 120px 96px;
       gap: 10px;
       align-items: center;
       min-height: 68px;
@@ -133,21 +133,17 @@
     }
 
     .cart-inline {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: flex-start;
+      white-space: nowrap !important;
+      min-width: 92px;
       font-size: 14px;
       font-weight: 700;
       color: #fff;
       line-height: 1;
     }
-    .cart-count {
-      color: var(--brand);
-      font-size: 16px;
-      font-weight: 800;
-      line-height: 1;
-    }
+    .cart-inline::first-letter { color: var(--brand); }
 
     .account-menu-wrap {
       position: relative;
@@ -626,7 +622,7 @@
 
       <a class="header-card" href="#profile">Returns<strong>& Orders</strong></a>
 
-      <a class="header-card cart-inline" href="#"><span class="cart-count">0</span><span>Cart</span></a>
+      <a class="header-card cart-inline" href="#">0 Cart</a>
     </div>
   </header>
 
