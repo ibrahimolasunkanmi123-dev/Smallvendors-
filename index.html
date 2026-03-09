@@ -398,13 +398,31 @@
       <div class="account-menu-wrap" id="accountMenuWrap">
         <a id="accountLink" class="header-card" href="login.html">Hello, sign in<strong>Account & Lists</strong></a>
         <div id="accountMenu" class="account-menu">
+          <h4>Your Account</h4>
+          <div class="account-list">
+            <a href="#">Account</a>
+            <a href="#">Orders</a>
+            <a href="#">Recommendations</a>
+            <a href="#">Browsing History</a>
+            <a href="#">Your Shopping preferences</a>
+            <a href="#">Watchlist</a>
+            <a href="#">Video Purchases & Rentals</a>
+            <a href="#">Kindle Unlimited</a>
+            <a href="#">Content & Devices</a>
+            <a href="#">Subscribe & Save Items</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="account-menu-wrap" id="profileMenuWrap">
+        <a id="profileMenuLink" class="header-card" href="login.html">Profile<strong>Profile Menu</strong></a>
+        <div id="profileMenu" class="account-menu">
           <h4>Profile Menu</h4>
           <div class="account-list">
-            <a href=\"#\" data-menu-feature=\"post_products\">Posting Products</a>
-            <a href=\"#\" data-menu-feature=\"payment_options\">Payment Options</a>
-            <a href=\"#\" data-menu-feature=\"live_chat\">Live Chat</a>
-            <a href=\"#\" data-menu-feature=\"help_center\">Help Center</a>
-            <a href=\"#\" data-menu-feature=\"logout\">Logout</a>
+            <a href="#" data-profile-feature="post_products">Posting Products</a>
+            <a href="#" data-profile-feature="payment_options">Payment Options</a>
+            <a href="#" data-profile-feature="live_chat">Live Chat</a>
+            <a href="#" data-profile-feature="help_center">Help Center</a>
           </div>
         </div>
       </div>
@@ -503,10 +521,13 @@
     const accountLink = document.getElementById('accountLink');
     const accountMenuWrap = document.getElementById('accountMenuWrap');
     const accountMenu = document.getElementById('accountMenu');
+    const profileMenuWrap = document.getElementById('profileMenuWrap');
+    const profileMenu = document.getElementById('profileMenu');
+    const profileMenuLink = document.getElementById('profileMenuLink');
     const signupNav = document.getElementById('signupNav');
     const loginNav = document.getElementById('loginNav');
     const profileActions = document.querySelector('.profile-actions');
-    const accountMenuLinks = document.querySelectorAll('[data-menu-feature]');
+    const profileMenuLinks = document.querySelectorAll('[data-profile-feature]');
 
     function render(items) {
       productsGrid.innerHTML = '';
@@ -632,7 +653,9 @@
         const user = await account.get();
         const label = user.name || user.email || 'User';
         accountLink.innerHTML = `Hello, ${label}<strong>Account & Lists</strong>`;
-        accountLink.href = '#profile';
+        accountLink.href = '#';
+        profileMenuLink.href = '#';
+        profileMenuLink.innerHTML = `Profile<strong>${label}</strong>`;
         profileTitle.textContent = `Welcome, ${label}`;
         profilePanel.style.display = 'block';
         signupNav.style.display = 'none';
@@ -652,6 +675,8 @@
       } catch (_) {
         accountLink.innerHTML = 'Hello, sign in<strong>Account & Lists</strong>';
         accountLink.href = 'login.html';
+        profileMenuLink.href = 'login.html';
+        profileMenuLink.innerHTML = 'Profile<strong>Profile Menu</strong>';
         profilePanel.style.display = 'none';
         signupNav.style.display = 'inline-block';
         loginNav.style.display = 'inline-block';
@@ -659,9 +684,8 @@
     }
 
     accountLink.addEventListener('click', (event) => {
-      if (accountLink.getAttribute('href') === '#profile' || accountLink.getAttribute('href') === '#profilePanel') {
+      if (accountLink.getAttribute('href') === '#') {
         event.preventDefault();
-        profilePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
         accountMenu.classList.remove('open');
       }
       accountMenu.classList.toggle('open');
@@ -679,13 +703,33 @@
       if (!accountMenuWrap.contains(event.target)) {
         accountMenu.classList.remove('open');
       }
+      if (!profileMenuWrap.contains(event.target)) {
+        profileMenu.classList.remove('open');
+      }
     });
 
-    accountMenuLinks.forEach((link) => {
+    profileMenuLink.addEventListener('click', (event) => {
+      if (profileMenuLink.getAttribute('href') === '#') {
+        event.preventDefault();
+        profileMenu.classList.toggle('open');
+      }
+    });
+
+    profileMenuWrap.addEventListener('mouseenter', () => {
+      if (profileMenuLink.getAttribute('href') === '#') {
+        profileMenu.classList.add('open');
+      }
+    });
+
+    profileMenuWrap.addEventListener('mouseleave', () => {
+      profileMenu.classList.remove('open');
+    });
+
+    profileMenuLinks.forEach((link) => {
       link.addEventListener('click', (event) => {
         event.preventDefault();
-        const featureKey = link.getAttribute('data-menu-feature');
-        accountMenu.classList.remove('open');
+        const featureKey = link.getAttribute('data-profile-feature');
+        profileMenu.classList.remove('open');
         handleFeatureAction(featureKey);
       });
     });
