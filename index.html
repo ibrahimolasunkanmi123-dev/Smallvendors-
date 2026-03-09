@@ -153,6 +153,9 @@
       padding: 12px;
       display: none;
       z-index: 20;
+      max-height: 72vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
     }
 
     .account-menu.open { display: block; }
@@ -793,9 +796,29 @@
     }
 
     function handleAccountAction(featureKey) {
+      const openMarketplaceFeature = (feature, message) => {
+        localStorage.setItem('sv-account-feature', feature);
+        if (message) {
+          localStorage.setItem('sv-account-toast', message);
+        }
+        window.location.href = 'marketplace.html';
+      };
+
       if (featureKey === 'account') {
         profileMenu.classList.add('open');
         showToast('Profile menu opened.');
+        return;
+      }
+      if (featureKey === 'orders') {
+        openMarketplaceFeature('orders', 'Opening your orders.');
+        return;
+      }
+      if (featureKey === 'recommendations') {
+        openMarketplaceFeature('recommendations', 'Loading recommendations for you.');
+        return;
+      }
+      if (featureKey === 'browsing_history') {
+        openMarketplaceFeature('browsing_history', 'Opening browsing history.');
         return;
       }
       if (featureKey === 'same_day_local') {
@@ -807,9 +830,7 @@
         return;
       }
       if (featureKey === 'verified_sellers') {
-        showToast('Verified seller filters applied.');
-        localStorage.setItem('sv-account-feature', 'verified_sellers');
-        window.location.href = 'marketplace.html';
+        openMarketplaceFeature('verified_sellers', 'Verified seller filters applied.');
         return;
       }
       if (featureKey === 'smart_search') {
@@ -824,6 +845,28 @@
       }
       if (featureKey === 'shopping_preferences') {
         localStorage.setItem('sv-preferences-open', '1');
+        openMarketplaceFeature('shopping_preferences', 'Opening shopping preferences.');
+        return;
+      }
+      if (featureKey === 'watchlist') {
+        openMarketplaceFeature('watchlist', 'Opening your watchlist.');
+        return;
+      }
+      if (featureKey === 'video_purchases') {
+        openMarketplaceFeature('video_purchases', 'Opening video purchases and rentals.');
+        return;
+      }
+      if (featureKey === 'kindle_unlimited') {
+        openMarketplaceFeature('kindle_unlimited', 'Opening Kindle Unlimited.');
+        return;
+      }
+      if (featureKey === 'content_devices') {
+        openMarketplaceFeature('content_devices', 'Opening content and devices.');
+        return;
+      }
+      if (featureKey === 'subscribe_save') {
+        openMarketplaceFeature('subscribe_save', 'Opening Subscribe & Save items.');
+        return;
       }
       localStorage.setItem('sv-account-feature', featureKey);
       window.location.href = 'marketplace.html';
