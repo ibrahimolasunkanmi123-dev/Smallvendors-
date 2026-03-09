@@ -218,6 +218,56 @@
     .hero h1 { margin: 0; font-size: clamp(28px, 4vw, 42px); }
     .hero p { margin: 10px 0 0; color: #d7e3ff; }
 
+    .account-task-panel {
+      max-width: 1320px;
+      margin: 12px auto 0;
+      padding: 0 16px;
+      display: none;
+    }
+
+    .account-task-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 12px 24px rgba(16, 24, 40, 0.08);
+    }
+
+    .account-task-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .account-task-head h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .account-task-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .account-task-list {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .account-task-list div {
+      border: 1px solid #e7edf7;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #f8fbff;
+    }
+
     .content {
       max-width: 1320px;
       margin: 16px auto 40px;
@@ -282,6 +332,29 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+    }
+
+    .product-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .small-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .small-btn.saved {
+      color: #14532d;
+      border-color: #86efac;
+      background: #f0fdf4;
     }
 
     .price { font-size: 20px; font-weight: 800; color: var(--ok); }
@@ -566,6 +639,18 @@
     </div>
   </section>
 
+  <section id="accountTaskPanel" class="account-task-panel">
+    <article class="account-task-card">
+      <div class="account-task-head">
+        <h3 id="accountTaskTitle">Account Task</h3>
+        <button id="closeAccountTaskBtn" type="button" class="small-btn">Close</button>
+      </div>
+      <p id="accountTaskDesc" style="margin:0; color:var(--muted);"></p>
+      <div id="accountTaskList" class="account-task-list"></div>
+      <div id="accountTaskActions" class="account-task-actions"></div>
+    </article>
+  </section>
+
   <main class="content">
     <div class="catalog-header">
       <input id="homeSearchInput" class="catalog-search" type="text" placeholder="Search products on home page">
@@ -690,14 +775,53 @@
     const previewDesc = document.getElementById('previewDesc');
     const previewPrice = document.getElementById('previewPrice');
     const previewVendor = document.getElementById('previewVendor');
+    const accountTaskPanel = document.getElementById('accountTaskPanel');
+    const closeAccountTaskBtn = document.getElementById('closeAccountTaskBtn');
+    const accountTaskTitle = document.getElementById('accountTaskTitle');
+    const accountTaskDesc = document.getElementById('accountTaskDesc');
+    const accountTaskList = document.getElementById('accountTaskList');
+    const accountTaskActions = document.getElementById('accountTaskActions');
 
     let isAuthenticated = false;
     let currentUserType = 'buyer';
     let currentDisplayName = 'Your Shop';
+    let currentRenderedItems = [];
+
+    function readListStore(key) {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    }
+
+    function writeListStore(key, list) {
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+
+    function addHistoryItem(name) {
+      const list = readListStore('sv-browsing-history').filter((item) => item !== name);
+      list.unshift(name);
+      writeListStore('sv-browsing-history', list.slice(0, 20));
+    }
+
+    function toggleWatchlistItem(name) {
+      const list = readListStore('sv-watchlist');
+      const index = list.indexOf(name);
+      if (index >= 0) {
+        list.splice(index, 1);
+      } else {
+        list.unshift(name);
+      }
+      writeListStore('sv-watchlist', list.slice(0, 30));
+      return index < 0;
+    }
+
+    function getItemsByNames(names) {
+      return products.filter((item) => names.includes(item.name));
+    }
 
     function render(items) {
+      currentRenderedItems = [...items];
       productsGrid.innerHTML = '';
       for (const item of items) {
+        const isSaved = readListStore('sv-watchlist').includes(item.name);
         const card = document.createElement('article');
         card.className = 'product';
         card.innerHTML = `
@@ -709,10 +833,30 @@
               <span class="price">$${item.price.toFixed(2)}</span>
               <span class="vendor">${item.vendor}</span>
             </div>
+            <div class="product-actions">
+              <button type="button" class="small-btn" data-product-view="${item.name}">Quick View</button>
+              <button type="button" class="small-btn ${isSaved ? 'saved' : ''}" data-product-save="${item.name}">${isSaved ? 'Saved' : 'Save'}</button>
+            </div>
           </div>
         `;
         productsGrid.appendChild(card);
       }
+      productsGrid.querySelectorAll('[data-product-view]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const name = btn.getAttribute('data-product-view');
+          addHistoryItem(name);
+          showToast(`${name} added to browsing history.`);
+        });
+      });
+      productsGrid.querySelectorAll('[data-product-save]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const name = btn.getAttribute('data-product-save');
+          const added = toggleWatchlistItem(name);
+          btn.classList.toggle('saved', added);
+          btn.textContent = added ? 'Saved' : 'Save';
+          showToast(added ? `${name} saved to watchlist.` : `${name} removed from watchlist.`);
+        });
+      });
       productCount.textContent = `Showing ${items.length} products`;
     }
 
@@ -796,12 +940,21 @@
     }
 
     function handleAccountAction(featureKey) {
-      const openMarketplaceFeature = (feature, message) => {
-        localStorage.setItem('sv-account-feature', feature);
-        if (message) {
-          localStorage.setItem('sv-account-toast', message);
+      const openTaskPanel = (title, description, list = [], actions = []) => {
+        accountTaskTitle.textContent = title;
+        accountTaskDesc.textContent = description;
+        accountTaskList.innerHTML = list.map((item) => `<div>${item}</div>`).join('');
+        accountTaskActions.innerHTML = '';
+        for (const action of actions) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'small-btn';
+          btn.textContent = action.label;
+          btn.addEventListener('click', action.onClick);
+          accountTaskActions.appendChild(btn);
         }
-        window.location.href = 'marketplace.html';
+        accountTaskPanel.style.display = 'block';
+        accountTaskPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
 
       if (featureKey === 'account') {
@@ -810,15 +963,34 @@
         return;
       }
       if (featureKey === 'orders') {
-        openMarketplaceFeature('orders', 'Opening your orders.');
+        openTaskPanel(
+          'Orders',
+          'Track and manage your recent purchases.',
+          ['View current orders', 'Track active shipment', 'Cancel pending order'],
+          [{ label: 'Go to products', onClick: () => document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' }) }]
+        );
         return;
       }
       if (featureKey === 'recommendations') {
-        openMarketplaceFeature('recommendations', 'Loading recommendations for you.');
+        departmentSelect.value = 'all';
+        homeSearchInput.value = '';
+        globalSearchInput.value = '';
+        filterProducts();
+        openTaskPanel(
+          'Recommendations',
+          'Product suggestions refreshed for your account.',
+          currentRenderedItems.slice(0, 4).map((item) => `${item.name} - $${item.price.toFixed(2)}`)
+        );
         return;
       }
       if (featureKey === 'browsing_history') {
-        openMarketplaceFeature('browsing_history', 'Opening browsing history.');
+        const history = readListStore('sv-browsing-history');
+        openTaskPanel(
+          'Browsing History',
+          'Recently viewed products are listed below.',
+          history.length ? history : ['No browsing history yet. Use Quick View on any product card.'],
+          [{ label: 'Clear history', onClick: () => { writeListStore('sv-browsing-history', []); showToast('Browsing history cleared.'); handleAccountAction('browsing_history'); } }]
+        );
         return;
       }
       if (featureKey === 'same_day_local') {
@@ -826,16 +998,31 @@
         homeSearchInput.value = '';
         globalSearchInput.value = '';
         filterProducts();
-        showToast('Showing local options available today.');
+        openTaskPanel(
+          'Same-day local options',
+          'Filtered to quick local selections available today.',
+          currentRenderedItems.slice(0, 6).map((item) => `${item.name} by ${item.vendor}`)
+        );
         return;
       }
       if (featureKey === 'verified_sellers') {
-        openMarketplaceFeature('verified_sellers', 'Verified seller filters applied.');
+        const verified = products.filter((item) => item.vendor.includes('Joe') || item.vendor.includes('Artisan'));
+        render(verified);
+        openTaskPanel(
+          'Verified seller signals',
+          'Showing products from verified seller profiles.',
+          verified.map((item) => `${item.vendor} - ${item.name}`),
+          [{ label: 'Reset products', onClick: () => filterProducts() }]
+        );
         return;
       }
       if (featureKey === 'smart_search') {
         globalSearchInput.focus();
-        showToast('Start typing to search products.');
+        openTaskPanel(
+          'Smart product search',
+          'Use the top search bar to find products by name, vendor, and category.',
+          ['Type your keywords', 'Use department filter', 'Press Enter or click Go']
+        );
         return;
       }
       if (featureKey === 'profile_quick_actions') {
@@ -844,32 +1031,79 @@
         return;
       }
       if (featureKey === 'shopping_preferences') {
-        localStorage.setItem('sv-preferences-open', '1');
-        openMarketplaceFeature('shopping_preferences', 'Opening shopping preferences.');
+        const savedDept = localStorage.getItem('sv-preferred-department') || 'all';
+        openTaskPanel(
+          'Shopping preferences',
+          'Save your preferred department for quick discovery.',
+          [`Current preferred department: ${savedDept}`],
+          [
+            {
+              label: 'Save current department',
+              onClick: () => {
+                localStorage.setItem('sv-preferred-department', departmentSelect.value);
+                showToast('Shopping preference saved.');
+                handleAccountAction('shopping_preferences');
+              }
+            },
+            {
+              label: 'Apply saved preference',
+              onClick: () => {
+                departmentSelect.value = savedDept;
+                filterProducts();
+                showToast('Saved shopping preference applied.');
+              }
+            }
+          ]
+        );
         return;
       }
       if (featureKey === 'watchlist') {
-        openMarketplaceFeature('watchlist', 'Opening your watchlist.');
+        const watchlistNames = readListStore('sv-watchlist');
+        const watchlistItems = getItemsByNames(watchlistNames);
+        if (watchlistItems.length) {
+          render(watchlistItems);
+        }
+        openTaskPanel(
+          'Watchlist',
+          'Saved products from your account.',
+          watchlistItems.length ? watchlistItems.map((item) => `${item.name} - $${item.price.toFixed(2)}`) : ['No saved watchlist items yet. Use Save on any product card.'],
+          [{ label: 'Show all products', onClick: () => filterProducts() }]
+        );
         return;
       }
       if (featureKey === 'video_purchases') {
-        openMarketplaceFeature('video_purchases', 'Opening video purchases and rentals.');
+        openTaskPanel(
+          'Video Purchases & Rentals',
+          'Access your digital rentals and purchased video items.',
+          ['Start a new rental', 'Review active rentals', 'View purchase receipts']
+        );
         return;
       }
       if (featureKey === 'kindle_unlimited') {
-        openMarketplaceFeature('kindle_unlimited', 'Opening Kindle Unlimited.');
+        openTaskPanel(
+          'Kindle Unlimited',
+          'Manage your Kindle Unlimited catalog and reading activity.',
+          ['Browse available titles', 'Continue reading', 'Manage your plan']
+        );
         return;
       }
       if (featureKey === 'content_devices') {
-        openMarketplaceFeature('content_devices', 'Opening content and devices.');
+        openTaskPanel(
+          'Content & Devices',
+          'Manage content licenses and connected devices.',
+          ['Registered devices', 'Download settings', 'Sync status']
+        );
         return;
       }
       if (featureKey === 'subscribe_save') {
-        openMarketplaceFeature('subscribe_save', 'Opening Subscribe & Save items.');
+        openTaskPanel(
+          'Subscribe & Save Items',
+          'Manage recurring purchases and delivery cadence.',
+          ['Active subscriptions', 'Next delivery schedule', 'Pause or cancel subscription']
+        );
         return;
       }
-      localStorage.setItem('sv-account-feature', featureKey);
-      window.location.href = 'marketplace.html';
+      showToast('Feature ready.');
     }
 
     async function getUserProfileDocument(userId) {
@@ -1009,6 +1243,9 @@
         profileMenu.classList.remove('open');
         handleFeatureAction(featureKey);
       });
+    });
+    closeAccountTaskBtn.addEventListener('click', () => {
+      accountTaskPanel.style.display = 'none';
     });
 
     [postName, postCategory, postPrice, postImageUrl, postDescription].forEach((el) => {
