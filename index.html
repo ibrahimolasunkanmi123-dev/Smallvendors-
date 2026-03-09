@@ -793,13 +793,122 @@
     let currentUserType = 'buyer';
     let currentDisplayName = 'Your Shop';
     let currentRenderedItems = [];
+    const STORAGE_TO_PREF_LIST = {
+      'sv-watchlist': 'watchlist',
+      'sv-browsing-history': 'browsingHistory',
+      'sv-payment-methods': 'paymentMethods'
+    };
+    const PREF_DEFAULTS = {
+      watchlist: [],
+      browsingHistory: [],
+      paymentMethods: [],
+      preferredDepartment: 'all',
+      recentActions: [],
+      recentSearches: [],
+      postedProducts: []
+    };
+    let userPrefs = { ...PREF_DEFAULTS };
+
+    function normalizeUserPrefs(rawPrefs = {}) {
+      const safeArray = (value) => Array.isArray(value) ? value : [];
+      const preferredDepartment = typeof rawPrefs.preferredDepartment === 'string'
+        ? rawPrefs.preferredDepartment
+        : 'all';
+      return {
+        watchlist: safeArray(rawPrefs.watchlist),
+        browsingHistory: safeArray(rawPrefs.browsingHistory),
+        paymentMethods: safeArray(rawPrefs.paymentMethods),
+        preferredDepartment,
+        recentActions: safeArray(rawPrefs.recentActions),
+        recentSearches: safeArray(rawPrefs.recentSearches),
+        postedProducts: safeArray(rawPrefs.postedProducts)
+      };
+    }
+
+    function mirrorPrefsToLocalCache() {
+      localStorage.setItem('sv-watchlist', JSON.stringify(userPrefs.watchlist));
+      localStorage.setItem('sv-browsing-history', JSON.stringify(userPrefs.browsingHistory));
+      localStorage.setItem('sv-payment-methods', JSON.stringify(userPrefs.paymentMethods));
+      localStorage.setItem('sv-preferred-department', userPrefs.preferredDepartment || 'all');
+    }
+
+    async function loadUserPrefsFromBackend() {
+      if (!isAuthenticated) return;
+      try {
+        const prefs = await account.getPrefs();
+        userPrefs = normalizeUserPrefs(prefs);
+        mirrorPrefsToLocalCache();
+      } catch (_) {
+        userPrefs = normalizeUserPrefs({
+          watchlist: JSON.parse(localStorage.getItem('sv-watchlist') || '[]'),
+          browsingHistory: JSON.parse(localStorage.getItem('sv-browsing-history') || '[]'),
+          paymentMethods: JSON.parse(localStorage.getItem('sv-payment-methods') || '[]'),
+          preferredDepartment: localStorage.getItem('sv-preferred-department') || 'all'
+        });
+      }
+    }
+
+    async function updateUserPrefs(patch = {}) {
+      if (!isAuthenticated) return false;
+      userPrefs = { ...userPrefs, ...patch };
+      try {
+        await account.updatePrefs(userPrefs);
+        mirrorPrefsToLocalCache();
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function getPreferredDepartment() {
+      if (isAuthenticated) return userPrefs.preferredDepartment || 'all';
+      return localStorage.getItem('sv-preferred-department') || 'all';
+    }
+
+    function setPreferredDepartment(value) {
+      const department = value || 'all';
+      localStorage.setItem('sv-preferred-department', department);
+      if (isAuthenticated) {
+        void updateUserPrefs({ preferredDepartment: department });
+      }
+    }
+
+    function trackFeatureUsage(featureKey) {
+      if (!featureKey) return;
+      const next = [
+        { feature: featureKey, at: new Date().toISOString() },
+        ...userPrefs.recentActions.filter((entry) => entry.feature !== featureKey)
+      ].slice(0, 25);
+      if (isAuthenticated) {
+        void updateUserPrefs({ recentActions: next });
+      }
+    }
+
+    function saveRecentSearch(query) {
+      const cleaned = (query || '').trim();
+      if (!cleaned) return;
+      const next = [cleaned, ...userPrefs.recentSearches.filter((item) => item !== cleaned)].slice(0, 20);
+      if (isAuthenticated) {
+        void updateUserPrefs({ recentSearches: next });
+      } else {
+        localStorage.setItem('sv-recent-searches', JSON.stringify(next));
+      }
+    }
 
     function readListStore(key) {
+      const prefKey = STORAGE_TO_PREF_LIST[key];
+      if (prefKey && isAuthenticated) {
+        return Array.isArray(userPrefs[prefKey]) ? [...userPrefs[prefKey]] : [];
+      }
       return JSON.parse(localStorage.getItem(key) || '[]');
     }
 
     function writeListStore(key, list) {
       localStorage.setItem(key, JSON.stringify(list));
+      const prefKey = STORAGE_TO_PREF_LIST[key];
+      if (prefKey && isAuthenticated) {
+        void updateUserPrefs({ [prefKey]: [...list] });
+      }
     }
 
     function addHistoryItem(name) {
@@ -881,8 +990,14 @@
 
     homeSearchInput.addEventListener('input', filterProducts);
     globalSearchInput.addEventListener('input', filterProducts);
-    departmentSelect.addEventListener('change', filterProducts);
-    globalSearchBtn.addEventListener('click', filterProducts);
+    departmentSelect.addEventListener('change', () => {
+      setPreferredDepartment(departmentSelect.value);
+      filterProducts();
+    });
+    globalSearchBtn.addEventListener('click', () => {
+      saveRecentSearch(globalSearchInput.value || homeSearchInput.value);
+      filterProducts();
+    });
 
     function showToast(message) {
       featureToast.textContent = message;
@@ -908,11 +1023,11 @@
     }
 
     function readPaymentMethods() {
-      return JSON.parse(localStorage.getItem('sv-payment-methods') || '[]');
+      return readListStore('sv-payment-methods');
     }
 
     function writePaymentMethods(methods) {
-      localStorage.setItem('sv-payment-methods', JSON.stringify(methods));
+      writeListStore('sv-payment-methods', methods);
     }
 
     function renderPaymentOptionsPanel() {
@@ -1052,11 +1167,17 @@
         localStorage.removeItem('sv-watchlist');
         localStorage.removeItem('sv-browsing-history');
         localStorage.removeItem('sv-preferred-department');
+        localStorage.removeItem('sv-payment-methods');
+        localStorage.removeItem('sv-recent-searches');
+        userPrefs = { ...PREF_DEFAULTS };
         window.location.replace('login.html');
       }
     }
 
     function handleFeatureAction(featureKey) {
+      if (featureKey !== 'logout') {
+        trackFeatureUsage(`profile:${featureKey}`);
+      }
       if (featureKey === 'logout') {
         logoutUser();
         return;
@@ -1090,6 +1211,7 @@
     }
 
     function handleAccountAction(featureKey) {
+      trackFeatureUsage(`account:${featureKey}`);
       if (featureKey === 'account') {
         profileMenu.classList.add('open');
         showToast('Profile menu opened.');
@@ -1164,7 +1286,7 @@
         return;
       }
       if (featureKey === 'shopping_preferences') {
-        const savedDept = localStorage.getItem('sv-preferred-department') || 'all';
+        const savedDept = getPreferredDepartment();
         openTaskPanel(
           'Shopping preferences',
           'Save your preferred department for quick discovery.',
@@ -1173,7 +1295,7 @@
             {
               label: 'Save current department',
               onClick: () => {
-                localStorage.setItem('sv-preferred-department', departmentSelect.value);
+                setPreferredDepartment(departmentSelect.value);
                 showToast('Shopping preference saved.');
                 handleAccountAction('shopping_preferences');
               }
@@ -1286,6 +1408,7 @@
         const user = await account.get();
         const label = user.name || user.email || 'User';
         isAuthenticated = true;
+        userPrefs = { ...PREF_DEFAULTS };
         currentDisplayName = label;
         accountLink.innerHTML = `Hello, ${label}<strong>Account & Lists</strong>`;
         accountLink.href = '#';
@@ -1305,10 +1428,17 @@
           // Keep header authenticated even if profile document creation fails.
           currentUserType = 'buyer';
         }
+        await loadUserPrefsFromBackend();
+        const preferredDepartment = getPreferredDepartment();
+        if ([...departmentSelect.options].some((option) => option.value === preferredDepartment)) {
+          departmentSelect.value = preferredDepartment;
+        }
+        filterProducts();
       } catch (_) {
         isAuthenticated = false;
         currentUserType = 'buyer';
         currentDisplayName = 'Your Shop';
+        userPrefs = { ...PREF_DEFAULTS };
         accountLink.innerHTML = 'Hello, sign in<strong>Account & Lists</strong>';
         accountLink.href = 'login.html';
         profileMenuLink.href = 'login.html';
@@ -1388,6 +1518,8 @@
       const category = postCategory.value;
       const price = Number(postPrice.value || 0);
       const desc = postDescription.value.trim();
+      const stock = Number(postStock.value || 0);
+      const imageUrl = postImageUrl.value.trim();
       const icon = getCategoryIcon(category);
 
       products.unshift({
@@ -1398,6 +1530,21 @@
         vendor: currentDisplayName,
         category: category || 'all'
       });
+      if (isAuthenticated) {
+        const postedProducts = [
+          {
+            name,
+            category: category || 'all',
+            price,
+            stock,
+            imageUrl: imageUrl || null,
+            postedAt: new Date().toISOString()
+          },
+          ...userPrefs.postedProducts
+        ].slice(0, 50);
+        void updateUserPrefs({ postedProducts });
+        trackFeatureUsage('profile:post_products_submit');
+      }
 
       render(products);
       closePostProductModal();
