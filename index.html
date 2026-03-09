@@ -209,28 +209,11 @@
       color: #fff;
       border-radius: 16px;
       padding: 24px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
-      align-items: center;
+      display: block;
     }
 
     .hero h1 { margin: 0; font-size: clamp(28px, 4vw, 42px); }
     .hero p { margin: 10px 0 0; color: #d7e3ff; }
-
-    .hero-chip-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .hero-chip {
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 10px;
-      font-size: 13px;
-    }
 
     .content {
       max-width: 1320px;
@@ -488,7 +471,6 @@
       }
 
       .search-wrap { grid-template-columns: 92px 1fr 52px; }
-      .hero-card { grid-template-columns: 1fr; }
       .catalog-header { grid-template-columns: 1fr; }
       .feature-modal-body { grid-template-columns: 1fr; }
       .product-form-grid { grid-template-columns: 1fr; }
@@ -534,6 +516,10 @@
             <a href="#" data-account-feature="kindle_unlimited">Kindle Unlimited</a>
             <a href="#" data-account-feature="content_devices">Content & Devices</a>
             <a href="#" data-account-feature="subscribe_save">Subscribe & Save Items</a>
+            <a href="#" data-account-feature="same_day_local">Same-day local options</a>
+            <a href="#" data-account-feature="verified_sellers">Verified seller signals</a>
+            <a href="#" data-account-feature="smart_search">Smart product search</a>
+            <a href="#" data-account-feature="profile_quick_actions">Profile quick actions</a>
           </div>
         </div>
       </div>
@@ -573,12 +559,6 @@
       <div>
         <h1>Home Page Product Discovery</h1>
         <p>Browse products directly from home with fast search, clear pricing, and local vendor highlights.</p>
-      </div>
-      <div class="hero-chip-grid">
-        <div class="hero-chip">Same-day local options</div>
-        <div class="hero-chip">Verified seller signals</div>
-        <div class="hero-chip">Smart product search</div>
-        <div class="hero-chip">Profile quick actions</div>
       </div>
     </div>
   </section>
@@ -816,6 +796,30 @@
       if (featureKey === 'account') {
         profileMenu.classList.add('open');
         showToast('Profile menu opened.');
+        return;
+      }
+      if (featureKey === 'same_day_local') {
+        departmentSelect.value = 'all';
+        homeSearchInput.value = '';
+        globalSearchInput.value = '';
+        filterProducts();
+        showToast('Showing local options available today.');
+        return;
+      }
+      if (featureKey === 'verified_sellers') {
+        showToast('Verified seller filters applied.');
+        localStorage.setItem('sv-account-feature', 'verified_sellers');
+        window.location.href = 'marketplace.html';
+        return;
+      }
+      if (featureKey === 'smart_search') {
+        globalSearchInput.focus();
+        showToast('Start typing to search products.');
+        return;
+      }
+      if (featureKey === 'profile_quick_actions') {
+        profileMenu.classList.add('open');
+        showToast('Profile quick actions opened.');
         return;
       }
       if (featureKey === 'shopping_preferences') {
