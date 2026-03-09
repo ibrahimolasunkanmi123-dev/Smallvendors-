@@ -310,6 +310,177 @@
       font-weight: 700;
     }
 
+    .feature-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 12, 24, 0.62);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 40;
+    }
+
+    .feature-modal {
+      width: min(920px, 100%);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 24px 44px rgba(16, 24, 40, 0.28);
+      overflow: hidden;
+    }
+
+    .feature-modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #f8fbff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .feature-modal-close {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .feature-modal-body {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .product-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .product-form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .field textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .product-form-actions {
+      margin-top: 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn-ghost,
+    .btn-primary {
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-ghost {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .btn-primary {
+      border: 1px solid var(--brand-strong);
+      background: var(--brand);
+      color: #2a1300;
+    }
+
+    .preview-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fcfdff;
+    }
+
+    .preview-media {
+      height: 128px;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #f7fafc;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .preview-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-title {
+      margin: 10px 0 6px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .preview-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      min-height: 36px;
+    }
+
+    .feature-toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 50;
+      background: #101828;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .feature-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     @media (max-width: 1080px) {
       .topbar-row {
         grid-template-columns: 1fr;
@@ -319,6 +490,8 @@
       .search-wrap { grid-template-columns: 92px 1fr 52px; }
       .hero-card { grid-template-columns: 1fr; }
       .catalog-header { grid-template-columns: 1fr; }
+      .feature-modal-body { grid-template-columns: 1fr; }
+      .product-form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -418,6 +591,69 @@
     <section id="productsGrid" class="products"></section>
   </main>
 
+  <div id="postProductModalBackdrop" class="feature-modal-backdrop">
+    <div class="feature-modal">
+      <div class="feature-modal-head">
+        <div>
+          <h3 style="margin:0;">Post a New Product</h3>
+          <p style="margin:4px 0 0; color:var(--muted); font-size:13px;">Only seller accounts can publish products.</p>
+        </div>
+        <button id="closePostProductModalBtn" type="button" class="feature-modal-close" aria-label="Close">×</button>
+      </div>
+      <div class="feature-modal-body">
+        <form id="postProductForm">
+          <div class="product-form-grid">
+            <div class="field full">
+              <label for="postName">Product Name</label>
+              <input id="postName" type="text" required placeholder="Enter product name">
+            </div>
+            <div class="field">
+              <label for="postCategory">Category</label>
+              <select id="postCategory" required>
+                <option value="">Select category</option>
+                <option value="food">Food</option>
+                <option value="fashion">Fashion</option>
+                <option value="electronics">Electronics</option>
+                <option value="home">Home</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="postPrice">Price (USD)</label>
+              <input id="postPrice" type="number" min="0" step="0.01" required placeholder="0.00">
+            </div>
+            <div class="field">
+              <label for="postStock">Available Stock</label>
+              <input id="postStock" type="number" min="1" step="1" required placeholder="1">
+            </div>
+            <div class="field">
+              <label for="postImageUrl">Image URL (Optional)</label>
+              <input id="postImageUrl" type="url" placeholder="https://...">
+            </div>
+            <div class="field full">
+              <label for="postDescription">Description</label>
+              <textarea id="postDescription" required placeholder="Describe product quality, size, or key highlights"></textarea>
+            </div>
+          </div>
+          <div class="product-form-actions">
+            <button id="cancelPostProductBtn" type="button" class="btn-ghost">Cancel</button>
+            <button type="submit" class="btn-primary">Publish Product</button>
+          </div>
+        </form>
+        <aside class="preview-card">
+          <div id="previewMedia" class="preview-media">Image preview</div>
+          <h4 id="previewTitle" class="preview-title">Product title</h4>
+          <p id="previewDesc" class="preview-desc">Product description preview will show here.</p>
+          <div class="meta" style="margin-top:8px;">
+            <span id="previewPrice" class="price">$0.00</span>
+            <span id="previewVendor" class="vendor">Your Shop</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div id="featureToast" class="feature-toast"></div>
+
   <script>
     const { Client, Account, Databases } = Appwrite;
     const client = new Client()
@@ -454,6 +690,26 @@
     const signupNav = document.getElementById('signupNav');
     const loginNav = document.getElementById('loginNav');
     const profileMenuLinks = document.querySelectorAll('[data-profile-feature]');
+    const postProductModalBackdrop = document.getElementById('postProductModalBackdrop');
+    const closePostProductModalBtn = document.getElementById('closePostProductModalBtn');
+    const cancelPostProductBtn = document.getElementById('cancelPostProductBtn');
+    const postProductForm = document.getElementById('postProductForm');
+    const featureToast = document.getElementById('featureToast');
+    const postName = document.getElementById('postName');
+    const postCategory = document.getElementById('postCategory');
+    const postPrice = document.getElementById('postPrice');
+    const postStock = document.getElementById('postStock');
+    const postImageUrl = document.getElementById('postImageUrl');
+    const postDescription = document.getElementById('postDescription');
+    const previewMedia = document.getElementById('previewMedia');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewDesc = document.getElementById('previewDesc');
+    const previewPrice = document.getElementById('previewPrice');
+    const previewVendor = document.getElementById('previewVendor');
+
+    let isAuthenticated = false;
+    let currentUserType = 'buyer';
+    let currentDisplayName = 'Your Shop';
 
     function render(items) {
       productsGrid.innerHTML = '';
@@ -493,11 +749,62 @@
     departmentSelect.addEventListener('change', filterProducts);
     globalSearchBtn.addEventListener('click', filterProducts);
 
+    function showToast(message) {
+      featureToast.textContent = message;
+      featureToast.classList.add('show');
+      setTimeout(() => featureToast.classList.remove('show'), 2400);
+    }
+
+    function closePostProductModal() {
+      postProductModalBackdrop.style.display = 'none';
+    }
+
+    function openPostProductModal() {
+      if (!isAuthenticated) {
+        showToast('Please sign in first.');
+        window.location.href = 'login.html';
+        return;
+      }
+      if (currentUserType !== 'vendor') {
+        showToast('Only seller accounts can post products.');
+        return;
+      }
+      previewVendor.textContent = currentDisplayName;
+      postProductModalBackdrop.style.display = 'flex';
+    }
+
+    function getCategoryIcon(category) {
+      if (category === 'food') return 'FD';
+      if (category === 'fashion') return 'FS';
+      if (category === 'electronics') return 'EL';
+      if (category === 'home') return 'HG';
+      return 'PR';
+    }
+
+    function refreshPostPreview() {
+      const name = postName.value.trim() || 'Product title';
+      const desc = postDescription.value.trim() || 'Product description preview will show here.';
+      const price = Number(postPrice.value || 0);
+      const imageUrl = postImageUrl.value.trim();
+      previewTitle.textContent = name;
+      previewDesc.textContent = desc;
+      previewPrice.textContent = `$${price.toFixed(2)}`;
+      if (imageUrl) {
+        previewMedia.innerHTML = `<img src=\"${imageUrl}\" alt=\"Product preview\">`;
+      } else {
+        previewMedia.textContent = 'Image preview';
+      }
+    }
+
     function handleFeatureAction(featureKey) {
       if (featureKey === 'logout') {
         account.deleteSession('current')
           .catch(() => {})
           .finally(() => window.location.replace('index.html'));
+        return;
+      }
+      if (featureKey === 'post_products') {
+        openPostProductModal();
         return;
       }
       localStorage.setItem('sv-profile-feature', featureKey);
@@ -550,6 +857,8 @@
       try {
         const user = await account.get();
         const label = user.name || user.email || 'User';
+        isAuthenticated = true;
+        currentDisplayName = label;
         accountLink.innerHTML = `Hello, ${label}<strong>Account & Lists</strong>`;
         accountLink.href = '#';
         profileMenuLink.href = '#';
@@ -558,14 +867,20 @@
         loginNav.style.display = 'none';
         try {
           try {
-            await getUserProfileDocument(user.$id);
+            const profileDoc = await getUserProfileDocument(user.$id);
+            currentUserType = profileDoc.userType === 'vendor' ? 'vendor' : 'buyer';
           } catch (_) {
-            await createUserProfileDocument(user);
+            const createdProfile = await createUserProfileDocument(user);
+            currentUserType = createdProfile.userType === 'vendor' ? 'vendor' : 'buyer';
           }
         } catch (_) {
           // Keep header authenticated even if profile document creation fails.
+          currentUserType = 'buyer';
         }
       } catch (_) {
+        isAuthenticated = false;
+        currentUserType = 'buyer';
+        currentDisplayName = 'Your Shop';
         accountLink.innerHTML = 'Hello, sign in<strong>Account & Lists</strong>';
         accountLink.href = 'login.html';
         profileMenuLink.href = 'login.html';
@@ -626,7 +941,44 @@
       });
     });
 
+    [postName, postCategory, postPrice, postImageUrl, postDescription].forEach((el) => {
+      el.addEventListener('input', refreshPostPreview);
+    });
+
+    closePostProductModalBtn.addEventListener('click', closePostProductModal);
+    cancelPostProductBtn.addEventListener('click', closePostProductModal);
+    postProductModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === postProductModalBackdrop) {
+        closePostProductModal();
+      }
+    });
+
+    postProductForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const name = postName.value.trim();
+      const category = postCategory.value;
+      const price = Number(postPrice.value || 0);
+      const desc = postDescription.value.trim();
+      const icon = getCategoryIcon(category);
+
+      products.unshift({
+        icon,
+        name,
+        desc,
+        price,
+        vendor: currentDisplayName,
+        category: category || 'all'
+      });
+
+      render(products);
+      closePostProductModal();
+      postProductForm.reset();
+      refreshPostPreview();
+      showToast('Product posted successfully.');
+    });
+
     render(products);
+    refreshPostPreview();
     syncAuthUi();
   </script>
 </body>
