@@ -532,6 +532,164 @@
       min-height: 36px;
     }
 
+    .payment-modal {
+      width: min(980px, 100%);
+      background:
+        radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .payment-modal-body {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .payment-showcase {
+      display: grid;
+      gap: 14px;
+    }
+
+    .payment-hero {
+      border: 1px solid rgba(30, 41, 59, 0.08);
+      border-radius: 18px;
+      padding: 18px;
+      background:
+        linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #2563eb 100%);
+      color: #fff;
+      box-shadow: 0 18px 34px rgba(37, 99, 235, 0.18);
+    }
+
+    .payment-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .payment-brand-badge {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .payment-hero-number {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      margin: 0 0 14px;
+    }
+
+    .payment-hero-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .payment-methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .payment-method-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      display: grid;
+      gap: 10px;
+    }
+
+    .payment-method-card.is-default {
+      border-color: rgba(37, 99, 235, 0.35);
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.12);
+    }
+
+    .payment-method-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .payment-method-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .payment-default-pill {
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #1d4ed8;
+      background: #dbeafe;
+    }
+
+    .payment-method-meta {
+      color: var(--muted);
+      font-size: 13px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .payment-method-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .payment-empty {
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      background: #fff;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .payment-form-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .payment-form-card h4 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    .payment-form-card p {
+      margin: 0 0 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .payment-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .payment-form-grid .full {
+      grid-column: 1 / -1;
+    }
+
     .feature-toast {
       position: fixed;
       right: 16px;
@@ -563,6 +721,8 @@
       .catalog-header { grid-template-columns: 1fr; }
       .feature-modal-body { grid-template-columns: 1fr; }
       .product-form-grid { grid-template-columns: 1fr; }
+      .payment-modal-body { grid-template-columns: 1fr; }
+      .payment-form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -727,6 +887,69 @@
     </div>
   </div>
 
+  <div id="paymentModalBackdrop" class="feature-modal-backdrop">
+    <div class="feature-modal payment-modal">
+      <div class="feature-modal-head">
+        <div>
+          <h3 style="margin:0;">Payment Options</h3>
+          <p style="margin:4px 0 0; color:var(--muted); font-size:13px;">Manage your saved cards in a dedicated wallet view.</p>
+        </div>
+        <button id="closePaymentModalBtn" type="button" class="feature-modal-close" aria-label="Close">x</button>
+      </div>
+      <div class="payment-modal-body">
+        <section class="payment-showcase">
+          <article class="payment-hero">
+            <div class="payment-hero-top">
+              <span class="payment-brand-badge" id="paymentHeroBrand">No Card Saved</span>
+              <span id="paymentHeroStatus" class="payment-brand-badge">Wallet</span>
+            </div>
+            <p id="paymentHeroNumber" class="payment-hero-number">**** **** **** ----</p>
+            <div class="payment-hero-meta">
+              <div>
+                <div style="font-size:11px; opacity:0.8;">Card Holder</div>
+                <strong id="paymentHeroHolder">Add your first payment method</strong>
+              </div>
+              <div>
+                <div style="font-size:11px; opacity:0.8;">Default</div>
+                <strong id="paymentHeroDefault">Not set</strong>
+              </div>
+            </div>
+          </article>
+          <div id="paymentMethodsGrid" class="payment-methods-grid"></div>
+        </section>
+        <aside class="payment-form-card">
+          <h4>Add a payment method</h4>
+          <p>Store card details in a cleaner wallet view. Only masked details are shown.</p>
+          <form id="paymentMethodForm">
+            <div class="payment-form-grid">
+              <div class="field full">
+                <label for="paymentHolderName">Card Holder Name</label>
+                <input id="paymentHolderName" type="text" placeholder="Enter card holder name" required>
+              </div>
+              <div class="field">
+                <label for="paymentBrand">Card Brand</label>
+                <select id="paymentBrand" required>
+                  <option value="Visa">Visa</option>
+                  <option value="Mastercard">Mastercard</option>
+                  <option value="Verve">Verve</option>
+                  <option value="American Express">American Express</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="paymentLast4">Last 4 Digits</label>
+                <input id="paymentLast4" type="text" inputmode="numeric" maxlength="4" placeholder="4242" required>
+              </div>
+            </div>
+            <div class="product-form-actions">
+              <button id="cancelPaymentModalBtn" type="button" class="btn-ghost">Close</button>
+              <button type="submit" class="btn-primary">Save Card</button>
+            </div>
+          </form>
+        </aside>
+      </div>
+    </div>
+  </div>
+
   <div id="featureToast" class="feature-toast"></div>
 
   <script>
@@ -782,6 +1005,19 @@
     const previewDesc = document.getElementById('previewDesc');
     const previewPrice = document.getElementById('previewPrice');
     const previewVendor = document.getElementById('previewVendor');
+    const paymentModalBackdrop = document.getElementById('paymentModalBackdrop');
+    const closePaymentModalBtn = document.getElementById('closePaymentModalBtn');
+    const cancelPaymentModalBtn = document.getElementById('cancelPaymentModalBtn');
+    const paymentMethodForm = document.getElementById('paymentMethodForm');
+    const paymentMethodsGrid = document.getElementById('paymentMethodsGrid');
+    const paymentHolderName = document.getElementById('paymentHolderName');
+    const paymentBrand = document.getElementById('paymentBrand');
+    const paymentLast4 = document.getElementById('paymentLast4');
+    const paymentHeroBrand = document.getElementById('paymentHeroBrand');
+    const paymentHeroStatus = document.getElementById('paymentHeroStatus');
+    const paymentHeroNumber = document.getElementById('paymentHeroNumber');
+    const paymentHeroHolder = document.getElementById('paymentHeroHolder');
+    const paymentHeroDefault = document.getElementById('paymentHeroDefault');
     const accountTaskPanel = document.getElementById('accountTaskPanel');
     const closeAccountTaskBtn = document.getElementById('closeAccountTaskBtn');
     const accountTaskTitle = document.getElementById('accountTaskTitle');
@@ -1030,89 +1266,104 @@
       writeListStore('sv-payment-methods', methods);
     }
 
+    function closePaymentModal() {
+      paymentModalBackdrop.style.display = 'none';
+    }
+
+    function buildPaymentMethodCard(method, index) {
+      const card = document.createElement('article');
+      card.className = `payment-method-card${method.isDefault ? ' is-default' : ''}`;
+
+      const head = document.createElement('div');
+      head.className = 'payment-method-head';
+
+      const name = document.createElement('div');
+      name.className = 'payment-method-name';
+      name.textContent = method.brand || method.type || 'Card';
+
+      head.appendChild(name);
+
+      if (method.isDefault) {
+        const pill = document.createElement('span');
+        pill.className = 'payment-default-pill';
+        pill.textContent = 'Default';
+        head.appendChild(pill);
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'payment-method-meta';
+      meta.innerHTML = `
+        <span>${method.label || '**** ----'}</span>
+        <span>${method.holder || 'Card holder not set'}</span>
+      `;
+
+      const actions = document.createElement('div');
+      actions.className = 'payment-method-actions';
+
+      if (!method.isDefault) {
+        const setDefaultBtn = document.createElement('button');
+        setDefaultBtn.type = 'button';
+        setDefaultBtn.className = 'small-btn';
+        setDefaultBtn.textContent = 'Set Default';
+        setDefaultBtn.addEventListener('click', () => {
+          const updated = readPaymentMethods().map((item, itemIndex) => ({
+            ...item,
+            isDefault: itemIndex === index
+          }));
+          writePaymentMethods(updated);
+          showToast('Default payment method updated.');
+          renderPaymentOptionsPanel();
+        });
+        actions.appendChild(setDefaultBtn);
+      }
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'small-btn';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', () => {
+        const updated = readPaymentMethods();
+        const removedWasDefault = updated[index]?.isDefault;
+        updated.splice(index, 1);
+        if (removedWasDefault && updated.length) {
+          updated[0].isDefault = true;
+        }
+        writePaymentMethods(updated);
+        showToast('Payment method removed.');
+        renderPaymentOptionsPanel();
+      });
+      actions.appendChild(removeBtn);
+
+      card.appendChild(head);
+      card.appendChild(meta);
+      card.appendChild(actions);
+      return card;
+    }
+
     function renderPaymentOptionsPanel() {
       const methods = readPaymentMethods();
-      const rows = methods.length
-        ? methods.map((method, index) => {
-            const defaultLabel = method.isDefault ? ' (Default)' : '';
-            return `${method.type}: ${method.label}${defaultLabel}`;
-          })
-        : ['No payment methods saved yet.'];
+      const defaultMethod = methods.find((method) => method.isDefault) || methods[0] || null;
 
-      const actions = [
-        {
-          label: 'Add Card',
-          onClick: () => {
-            const last4 = prompt('Enter last 4 digits for the new card (e.g. 4242):', '');
-            if (!last4 || !/^[0-9]{4}$/.test(last4.trim())) {
-              showToast('Card was not added.');
-              return;
-            }
-            const updated = readPaymentMethods();
-            updated.push({
-              type: 'Card',
-              label: `**** ${last4.trim()}`,
-              isDefault: updated.length === 0
-            });
-            writePaymentMethods(updated);
-            showToast('Card payment method saved.');
-            renderPaymentOptionsPanel();
-          }
-        },
-        {
-          label: 'Set Default',
-          onClick: () => {
-            const updated = readPaymentMethods();
-            if (!updated.length) {
-              showToast('Add a payment method first.');
-              return;
-            }
-            const choice = prompt(`Select default method number (1-${updated.length}):`, '1');
-            const index = Number(choice) - 1;
-            if (!Number.isInteger(index) || index < 0 || index >= updated.length) {
-              showToast('Invalid selection.');
-              return;
-            }
-            for (let i = 0; i < updated.length; i += 1) {
-              updated[i].isDefault = i === index;
-            }
-            writePaymentMethods(updated);
-            showToast('Default payment method updated.');
-            renderPaymentOptionsPanel();
-          }
-        },
-        {
-          label: 'Remove Method',
-          onClick: () => {
-            const updated = readPaymentMethods();
-            if (!updated.length) {
-              showToast('No payment method to remove.');
-              return;
-            }
-            const choice = prompt(`Remove method number (1-${updated.length}):`, `${updated.length}`);
-            const index = Number(choice) - 1;
-            if (!Number.isInteger(index) || index < 0 || index >= updated.length) {
-              showToast('Invalid selection.');
-              return;
-            }
-            const removedWasDefault = updated[index].isDefault;
-            updated.splice(index, 1);
-            if (removedWasDefault && updated.length) {
-              updated[0].isDefault = true;
-            }
-            writePaymentMethods(updated);
-            showToast('Payment method removed.');
-            renderPaymentOptionsPanel();
-          }
-        }
-      ];
+      accountTaskPanel.style.display = 'none';
+      paymentHeroBrand.textContent = defaultMethod ? (defaultMethod.brand || defaultMethod.type || 'Card') : 'No Card Saved';
+      paymentHeroStatus.textContent = methods.length ? `${methods.length} Saved` : 'Wallet';
+      paymentHeroNumber.textContent = defaultMethod ? `**** **** **** ${defaultMethod.last4 || '----'}` : '**** **** **** ----';
+      paymentHeroHolder.textContent = defaultMethod ? (defaultMethod.holder || 'Card Holder') : 'Add your first payment method';
+      paymentHeroDefault.textContent = defaultMethod ? 'Active' : 'Not set';
 
-      openTaskPanel(
-        'Payment Options',
-        'Manage your saved payment methods.',
-        rows.map((row, idx) => `${idx + 1}. ${row}`),
-        actions
-      );
+      paymentMethodsGrid.innerHTML = '';
+      if (!methods.length) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'payment-empty';
+        emptyState.textContent = 'No payment methods saved yet. Add a card from the form on the right.';
+        paymentMethodsGrid.appendChild(emptyState);
+      } else {
+        methods.forEach((method, index) => {
+          paymentMethodsGrid.appendChild(buildPaymentMethodCard(method, index));
+        });
+      }
+
+      paymentModalBackdrop.style.display = 'flex';
     }
 
     function closePostProductModal() {
@@ -1497,6 +1748,7 @@
       if (event.key === 'Escape') {
         accountMenu.classList.remove('open');
         profileMenu.classList.remove('open');
+        closePaymentModal();
       }
     });
 
@@ -1510,6 +1762,37 @@
       if (event.target === postProductModalBackdrop) {
         closePostProductModal();
       }
+    });
+    closePaymentModalBtn.addEventListener('click', closePaymentModal);
+    cancelPaymentModalBtn.addEventListener('click', closePaymentModal);
+    paymentModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === paymentModalBackdrop) {
+        closePaymentModal();
+      }
+    });
+    paymentMethodForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const holder = paymentHolderName.value.trim();
+      const brand = paymentBrand.value.trim();
+      const last4 = paymentLast4.value.trim();
+      if (!holder || !/^[0-9]{4}$/.test(last4)) {
+        showToast('Enter a valid card holder and 4 digits.');
+        return;
+      }
+      const updated = readPaymentMethods();
+      updated.push({
+        type: 'Card',
+        brand,
+        holder,
+        last4,
+        label: `**** ${last4}`,
+        isDefault: updated.length === 0
+      });
+      writePaymentMethods(updated);
+      paymentMethodForm.reset();
+      paymentBrand.value = 'Visa';
+      showToast('Card payment method saved.');
+      renderPaymentOptionsPanel();
     });
 
     postProductForm.addEventListener('submit', (event) => {
@@ -1555,6 +1838,7 @@
 
     render(products);
     refreshPostPreview();
+    paymentBrand.value = 'Visa';
     syncAuthUi();
   </script>
 </body>
