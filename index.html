@@ -690,6 +690,208 @@
       grid-column: 1 / -1;
     }
 
+    .chat-modal {
+      width: min(1040px, 100%);
+      background:
+        radial-gradient(circle at top left, rgba(20, 184, 166, 0.12), transparent 26%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .chat-modal-body {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 18px;
+      padding: 18px;
+      min-height: 600px;
+    }
+
+    .chat-side {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #0f172a 0%, #10254b 100%);
+      color: #eff6ff;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .chat-side h4 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .chat-side p {
+      margin: 0;
+      color: rgba(239, 246, 255, 0.78);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .chat-stat {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .chat-stat strong {
+      display: block;
+      font-size: 16px;
+      margin-top: 4px;
+    }
+
+    .chat-quick-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .chat-quick-btn {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .chat-main {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #ffffff;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+    }
+
+    .chat-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fcfdff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-header h4 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .chat-status {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .chat-status.waiting {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .chat-stream {
+      padding: 18px;
+      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+      overflow-y: auto;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      min-height: 380px;
+    }
+
+    .chat-message {
+      max-width: 78%;
+      display: grid;
+      gap: 6px;
+    }
+
+    .chat-message.ai {
+      justify-self: start;
+    }
+
+    .chat-message.user {
+      justify-self: end;
+    }
+
+    .chat-message.support {
+      justify-self: start;
+    }
+
+    .chat-role {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .chat-bubble {
+      border-radius: 18px;
+      padding: 12px 14px;
+      line-height: 1.55;
+      font-size: 14px;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .chat-message.ai .chat-bubble {
+      background: #eef6ff;
+      color: #0f172a;
+      border-top-left-radius: 6px;
+    }
+
+    .chat-message.user .chat-bubble {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      color: #fff;
+      border-top-right-radius: 6px;
+    }
+
+    .chat-message.support .chat-bubble {
+      background: #ecfdf3;
+      color: #14532d;
+      border-top-left-radius: 6px;
+    }
+
+    .chat-time {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .chat-compose {
+      border-top: 1px solid var(--line);
+      padding: 16px 18px;
+      background: #fff;
+      display: grid;
+      gap: 10px;
+    }
+
+    .chat-compose-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+    }
+
+    .chat-compose textarea {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-height: 56px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .chat-compose-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
     .feature-toast {
       position: fixed;
       right: 16px;
@@ -723,6 +925,9 @@
       .product-form-grid { grid-template-columns: 1fr; }
       .payment-modal-body { grid-template-columns: 1fr; }
       .payment-form-grid { grid-template-columns: 1fr; }
+      .chat-modal-body { grid-template-columns: 1fr; }
+      .chat-compose-row { grid-template-columns: 1fr; }
+      .chat-message { max-width: 100%; }
     }
   </style>
 </head>
@@ -950,6 +1155,59 @@
     </div>
   </div>
 
+  <div id="liveChatModalBackdrop" class="feature-modal-backdrop">
+    <div class="feature-modal chat-modal">
+      <div class="feature-modal-head">
+        <div>
+          <h3 style="margin:0;">Live Chat</h3>
+          <p style="margin:4px 0 0; color:var(--muted); font-size:13px;">AI assistant responds first, then live support joins when needed.</p>
+        </div>
+        <button id="closeLiveChatModalBtn" type="button" class="feature-modal-close" aria-label="Close">x</button>
+      </div>
+      <div class="chat-modal-body">
+        <aside class="chat-side">
+          <div>
+            <h4>Customer Care Desk</h4>
+            <p>Start with the Smallvendors assistant. It can answer common questions and prepare the issue before a support agent joins.</p>
+          </div>
+          <div class="chat-stat">
+            Queue Status
+            <strong id="chatQueueLabel">AI assistant online</strong>
+          </div>
+          <div class="chat-stat">
+            Current Session
+            <strong id="chatSessionCount">0 messages</strong>
+          </div>
+          <div>
+            <p style="margin-bottom:8px;">Quick prompts</p>
+            <div class="chat-quick-list">
+              <button type="button" class="chat-quick-btn" data-chat-prompt="I need help with my order status.">Order status help</button>
+              <button type="button" class="chat-quick-btn" data-chat-prompt="I have a payment issue on my account.">Payment issue</button>
+              <button type="button" class="chat-quick-btn" data-chat-prompt="I want to speak to a live support agent.">Talk to live support</button>
+            </div>
+          </div>
+        </aside>
+        <section class="chat-main">
+          <div class="chat-header">
+            <div>
+              <h4>Support Conversation</h4>
+              <p id="chatHeaderSubtitle" style="margin:4px 0 0; color:var(--muted); font-size:13px;">Start chatting below.</p>
+            </div>
+            <span id="chatSupportStatus" class="chat-status">AI Online</span>
+          </div>
+          <div id="chatStream" class="chat-stream"></div>
+          <form id="chatComposeForm" class="chat-compose">
+            <div class="chat-compose-row">
+              <textarea id="chatInput" placeholder="Describe your issue here"></textarea>
+              <button id="requestSupportBtn" type="button" class="btn-ghost">Request Live Support</button>
+              <button type="submit" class="btn-primary">Send</button>
+            </div>
+            <div class="chat-compose-note">The assistant replies first and summarizes your issue for support if escalation is needed.</div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
   <div id="featureToast" class="feature-toast"></div>
 
   <script>
@@ -1018,6 +1276,17 @@
     const paymentHeroNumber = document.getElementById('paymentHeroNumber');
     const paymentHeroHolder = document.getElementById('paymentHeroHolder');
     const paymentHeroDefault = document.getElementById('paymentHeroDefault');
+    const liveChatModalBackdrop = document.getElementById('liveChatModalBackdrop');
+    const closeLiveChatModalBtn = document.getElementById('closeLiveChatModalBtn');
+    const chatQueueLabel = document.getElementById('chatQueueLabel');
+    const chatSessionCount = document.getElementById('chatSessionCount');
+    const chatHeaderSubtitle = document.getElementById('chatHeaderSubtitle');
+    const chatSupportStatus = document.getElementById('chatSupportStatus');
+    const chatStream = document.getElementById('chatStream');
+    const chatComposeForm = document.getElementById('chatComposeForm');
+    const chatInput = document.getElementById('chatInput');
+    const requestSupportBtn = document.getElementById('requestSupportBtn');
+    const chatQuickButtons = document.querySelectorAll('[data-chat-prompt]');
     const accountTaskPanel = document.getElementById('accountTaskPanel');
     const closeAccountTaskBtn = document.getElementById('closeAccountTaskBtn');
     const accountTaskTitle = document.getElementById('accountTaskTitle');
@@ -1032,12 +1301,15 @@
     const STORAGE_TO_PREF_LIST = {
       'sv-watchlist': 'watchlist',
       'sv-browsing-history': 'browsingHistory',
-      'sv-payment-methods': 'paymentMethods'
+      'sv-payment-methods': 'paymentMethods',
+      'sv-chat-history': 'chatHistory'
     };
     const PREF_DEFAULTS = {
       watchlist: [],
       browsingHistory: [],
       paymentMethods: [],
+      chatHistory: [],
+      supportRequested: false,
       preferredDepartment: 'all',
       recentActions: [],
       recentSearches: [],
@@ -1054,6 +1326,8 @@
         watchlist: safeArray(rawPrefs.watchlist),
         browsingHistory: safeArray(rawPrefs.browsingHistory),
         paymentMethods: safeArray(rawPrefs.paymentMethods),
+        chatHistory: safeArray(rawPrefs.chatHistory),
+        supportRequested: rawPrefs.supportRequested === true,
         preferredDepartment,
         recentActions: safeArray(rawPrefs.recentActions),
         recentSearches: safeArray(rawPrefs.recentSearches),
@@ -1065,6 +1339,8 @@
       localStorage.setItem('sv-watchlist', JSON.stringify(userPrefs.watchlist));
       localStorage.setItem('sv-browsing-history', JSON.stringify(userPrefs.browsingHistory));
       localStorage.setItem('sv-payment-methods', JSON.stringify(userPrefs.paymentMethods));
+      localStorage.setItem('sv-chat-history', JSON.stringify(userPrefs.chatHistory));
+      localStorage.setItem('sv-support-requested', userPrefs.supportRequested ? '1' : '0');
       localStorage.setItem('sv-preferred-department', userPrefs.preferredDepartment || 'all');
     }
 
@@ -1079,6 +1355,8 @@
           watchlist: JSON.parse(localStorage.getItem('sv-watchlist') || '[]'),
           browsingHistory: JSON.parse(localStorage.getItem('sv-browsing-history') || '[]'),
           paymentMethods: JSON.parse(localStorage.getItem('sv-payment-methods') || '[]'),
+          chatHistory: JSON.parse(localStorage.getItem('sv-chat-history') || '[]'),
+          supportRequested: localStorage.getItem('sv-support-requested') === '1',
           preferredDepartment: localStorage.getItem('sv-preferred-department') || 'all'
         });
       }
@@ -1147,6 +1425,179 @@
       }
     }
 
+
+    function getChatHistory() {
+      if (isAuthenticated) return Array.isArray(userPrefs.chatHistory) ? [...userPrefs.chatHistory] : [];
+      return JSON.parse(localStorage.getItem('sv-chat-history') || '[]');
+    }
+
+    function writeChatHistory(history) {
+      localStorage.setItem('sv-chat-history', JSON.stringify(history));
+      if (isAuthenticated) {
+        void updateUserPrefs({ chatHistory: [...history] });
+      }
+    }
+
+    function isLiveSupportRequested() {
+      if (isAuthenticated) return userPrefs.supportRequested === true;
+      return localStorage.getItem('sv-support-requested') === '1';
+    }
+
+    function setLiveSupportRequested(value) {
+      const nextValue = value === true;
+      localStorage.setItem('sv-support-requested', nextValue ? '1' : '0');
+      if (isAuthenticated) {
+        void updateUserPrefs({ supportRequested: nextValue });
+      }
+    }
+
+    function createChatMessage(role, text) {
+      return {
+        role,
+        text,
+        at: new Date().toISOString()
+      };
+    }
+
+    function formatChatTime(value) {
+      try {
+        return new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      } catch (_) {
+        return '';
+      }
+    }
+
+    function renderLiveChatConversation() {
+      const history = getChatHistory();
+      const supportRequested = isLiveSupportRequested();
+      chatStream.innerHTML = '';
+
+      history.forEach((entry) => {
+        const row = document.createElement('div');
+        row.className = `chat-message ${entry.role}`;
+
+        const role = document.createElement('div');
+        role.className = 'chat-role';
+        role.textContent = entry.role === 'ai' ? 'Assistant' : entry.role === 'support' ? 'Live Support' : 'You';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+        bubble.textContent = entry.text;
+
+        const time = document.createElement('div');
+        time.className = 'chat-time';
+        time.textContent = formatChatTime(entry.at);
+
+        row.appendChild(role);
+        row.appendChild(bubble);
+        row.appendChild(time);
+        chatStream.appendChild(row);
+      });
+
+      chatSupportStatus.textContent = supportRequested ? 'Support Requested' : 'AI Online';
+      chatSupportStatus.classList.toggle('waiting', supportRequested);
+      chatQueueLabel.textContent = supportRequested ? 'Live support notified' : 'AI assistant online';
+      chatHeaderSubtitle.textContent = supportRequested
+        ? 'Your conversation has been summarized for a human support agent.'
+        : 'Ask a question and the assistant will respond first.';
+      chatSessionCount.textContent = `${history.length} messages`;
+      chatStream.scrollTop = chatStream.scrollHeight;
+    }
+
+    function ensureChatStarterMessage() {
+      const history = getChatHistory();
+      if (history.length) return;
+      history.push(createChatMessage('ai', 'Welcome to Smallvendors support. I can help with orders, payments, account access, and returns before a live specialist joins.'));
+      writeChatHistory(history);
+    }
+
+    function getAiChatReply(message) {
+      const text = message.toLowerCase();
+      if (text.includes('payment') || text.includes('card') || text.includes('billing')) {
+        return {
+          text: 'I can help with payment methods, default cards, or billing issues. Tell me whether you need to add a card, verify a charge, or update your default payment method.',
+          escalate: false
+        };
+      }
+      if (text.includes('order') || text.includes('track') || text.includes('delivery')) {
+        return {
+          text: 'I can help check order progress and delivery status. If you share the order issue, I will prepare the details before live support joins if needed.',
+          escalate: false
+        };
+      }
+      if (text.includes('refund') || text.includes('return') || text.includes('cancel')) {
+        return {
+          text: 'For refunds, returns, or cancellations, I can guide the next steps and collect the issue summary for support escalation.',
+          escalate: false
+        };
+      }
+      if (text.includes('login') || text.includes('password') || text.includes('sign in')) {
+        return {
+          text: 'For account access issues, confirm whether this is a password, verification, or session problem and I will narrow it down quickly.',
+          escalate: false
+        };
+      }
+      if (text.includes('agent') || text.includes('human') || text.includes('support')) {
+        return {
+          text: 'I can escalate this to live support now. I will summarize your issue and place it in the support queue.',
+          escalate: true
+        };
+      }
+      return {
+        text: 'I understand. Please share a bit more detail about the issue so I can either resolve it here or prepare it for live support.',
+        escalate: false
+      };
+    }
+
+    function requestLiveSupport() {
+      if (isLiveSupportRequested()) {
+        showToast('Live support has already been requested.');
+        renderLiveChatConversation();
+        return;
+      }
+      const history = getChatHistory();
+      history.push(createChatMessage('ai', 'I have summarized your issue and forwarded it to the live support queue.'));
+      history.push(createChatMessage('support', 'Live support has been notified. Please keep this chat open while an agent reviews your case.'));
+      writeChatHistory(history);
+      setLiveSupportRequested(true);
+      renderLiveChatConversation();
+      showToast('Live support requested.');
+    }
+
+    function sendLiveChatMessage(message) {
+      const content = (message || '').trim();
+      if (!content) return;
+      const history = getChatHistory();
+      history.push(createChatMessage('user', content));
+      writeChatHistory(history);
+      renderLiveChatConversation();
+
+      const reply = getAiChatReply(content);
+      window.setTimeout(() => {
+        const nextHistory = getChatHistory();
+        nextHistory.push(createChatMessage('ai', reply.text));
+        writeChatHistory(nextHistory);
+        if (reply.escalate) {
+          setLiveSupportRequested(true);
+          nextHistory.push(createChatMessage('support', 'A live support agent has been alerted and will follow up in this conversation.'));
+          writeChatHistory(nextHistory);
+        }
+        renderLiveChatConversation();
+      }, 420);
+    }
+
+    function openLiveChatModal() {
+      accountTaskPanel.style.display = 'none';
+      closePaymentModal();
+      ensureChatStarterMessage();
+      renderLiveChatConversation();
+      liveChatModalBackdrop.style.display = 'flex';
+      chatInput.focus();
+    }
+
+    function closeLiveChatModal() {
+      liveChatModalBackdrop.style.display = 'none';
+    }
     function addHistoryItem(name) {
       const list = readListStore('sv-browsing-history').filter((item) => item !== name);
       list.unshift(name);
@@ -1363,6 +1814,7 @@
         });
       }
 
+      closeLiveChatModal();
       paymentModalBackdrop.style.display = 'flex';
     }
 
@@ -1419,6 +1871,8 @@
         localStorage.removeItem('sv-browsing-history');
         localStorage.removeItem('sv-preferred-department');
         localStorage.removeItem('sv-payment-methods');
+        localStorage.removeItem('sv-chat-history');
+        localStorage.removeItem('sv-support-requested');
         localStorage.removeItem('sv-recent-searches');
         userPrefs = { ...PREF_DEFAULTS };
         window.location.replace('login.html');
@@ -1442,11 +1896,7 @@
         return;
       }
       if (featureKey === 'live_chat') {
-        openTaskPanel(
-          'Live Chat',
-          'Chat support is available for account and order help.',
-          ['Average response time: under 2 minutes', 'Support hours: 24/7']
-        );
+        openLiveChatModal();
         return;
       }
       if (featureKey === 'help_center') {
@@ -1749,6 +2199,7 @@
         accountMenu.classList.remove('open');
         profileMenu.classList.remove('open');
         closePaymentModal();
+        closeLiveChatModal();
       }
     });
 
@@ -1795,6 +2246,30 @@
       renderPaymentOptionsPanel();
     });
 
+    closeLiveChatModalBtn.addEventListener('click', closeLiveChatModal);
+    liveChatModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === liveChatModalBackdrop) {
+        closeLiveChatModal();
+      }
+    });
+    chatComposeForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) {
+        showToast('Enter a message first.');
+        return;
+      }
+      chatInput.value = '';
+      sendLiveChatMessage(message);
+    });
+    requestSupportBtn.addEventListener('click', requestLiveSupport);
+    chatQuickButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const promptText = button.getAttribute('data-chat-prompt') || '';
+        if (!promptText) return;
+        sendLiveChatMessage(promptText);
+      });
+    });
     postProductForm.addEventListener('submit', (event) => {
       event.preventDefault();
       const name = postName.value.trim();
