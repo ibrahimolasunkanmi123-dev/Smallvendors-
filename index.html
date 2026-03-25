@@ -532,7 +532,177 @@
       min-height: 36px;
     }
 
-    .payment-modal {
+    .orders-modal {
+      width: min(1040px, 100%);
+      background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 26%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .orders-modal-body {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      padding: 18px;
+      min-height: 560px;
+    }
+
+    .orders-side {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #1f2937 0%, #0f172a 100%);
+      color: #f8fafc;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .orders-side h4 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .orders-side p {
+      margin: 0;
+      color: rgba(248, 250, 252, 0.78);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .orders-stat {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .orders-stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 16px;
+    }
+
+    .orders-main {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .orders-hero {
+      border: 1px solid rgba(30, 41, 59, 0.08);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(135deg, #fff7ed 0%, #ffffff 55%, #f8fbff 100%);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .orders-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .orders-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .orders-badge.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .orders-badge.shipped {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .orders-badge.delivered {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .orders-badge.cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .orders-hero h4 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .orders-hero-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .orders-hero-meta div {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .orders-hero-meta strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .orders-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .order-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      display: grid;
+      gap: 10px;
+    }
+
+    .order-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .order-card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .order-card-meta {
+      display: grid;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .order-card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }    .payment-modal {
       width: min(980px, 100%);
       background:
         radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 28%),
@@ -1092,6 +1262,55 @@
     </div>
   </div>
 
+  <div id="ordersModalBackdrop" class="feature-modal-backdrop">
+    <div class="feature-modal orders-modal">
+      <div class="feature-modal-head">
+        <div>
+          <h3 style="margin:0;">Your Orders</h3>
+          <p style="margin:4px 0 0; color:var(--muted); font-size:13px;">Track progress, review deliveries, and manage pending orders from one place.</p>
+        </div>
+        <button id="closeOrdersModalBtn" type="button" class="feature-modal-close" aria-label="Close">x</button>
+      </div>
+      <div class="orders-modal-body">
+        <aside class="orders-side">
+          <div>
+            <h4>Order Center</h4>
+            <p>Your recent purchases are organized with shipment state, amount, and next available action.</p>
+          </div>
+          <div class="orders-stat">
+            Open Orders
+            <strong id="ordersOpenCount">0</strong>
+          </div>
+          <div class="orders-stat">
+            Delivered
+            <strong id="ordersDeliveredCount">0</strong>
+          </div>
+          <div class="orders-stat">
+            Next Delivery
+            <strong id="ordersNextDelivery">No active delivery</strong>
+          </div>
+        </aside>
+        <section class="orders-main">
+          <article class="orders-hero">
+            <div class="orders-hero-top">
+              <div>
+                <div style="font-size:12px; color:var(--muted);">Highlighted order</div>
+                <h4 id="ordersHeroTitle">No orders available</h4>
+              </div>
+              <span id="ordersHeroStatus" class="orders-badge delivered">Ready</span>
+            </div>
+            <p id="ordersHeroDesc" style="margin:0; color:var(--muted); font-size:14px;">Recent orders will appear here once available.</p>
+            <div class="orders-hero-meta">
+              <div>Order ID<strong id="ordersHeroId">-</strong></div>
+              <div>Amount<strong id="ordersHeroAmount">$0.00</strong></div>
+              <div>Delivery<strong id="ordersHeroDelivery">Not scheduled</strong></div>
+            </div>
+          </article>
+          <div id="ordersGrid" class="orders-grid"></div>
+        </section>
+      </div>
+    </div>
+  </div>
   <div id="paymentModalBackdrop" class="feature-modal-backdrop">
     <div class="feature-modal payment-modal">
       <div class="feature-modal-head">
@@ -1263,6 +1482,18 @@
     const previewDesc = document.getElementById('previewDesc');
     const previewPrice = document.getElementById('previewPrice');
     const previewVendor = document.getElementById('previewVendor');
+    const ordersModalBackdrop = document.getElementById('ordersModalBackdrop');
+    const closeOrdersModalBtn = document.getElementById('closeOrdersModalBtn');
+    const ordersOpenCount = document.getElementById('ordersOpenCount');
+    const ordersDeliveredCount = document.getElementById('ordersDeliveredCount');
+    const ordersNextDelivery = document.getElementById('ordersNextDelivery');
+    const ordersHeroTitle = document.getElementById('ordersHeroTitle');
+    const ordersHeroStatus = document.getElementById('ordersHeroStatus');
+    const ordersHeroDesc = document.getElementById('ordersHeroDesc');
+    const ordersHeroId = document.getElementById('ordersHeroId');
+    const ordersHeroAmount = document.getElementById('ordersHeroAmount');
+    const ordersHeroDelivery = document.getElementById('ordersHeroDelivery');
+    const ordersGrid = document.getElementById('ordersGrid');
     const paymentModalBackdrop = document.getElementById('paymentModalBackdrop');
     const closePaymentModalBtn = document.getElementById('closePaymentModalBtn');
     const cancelPaymentModalBtn = document.getElementById('cancelPaymentModalBtn');
@@ -1709,6 +1940,157 @@
       accountTaskPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+
+    function getDefaultOrders() {
+      return [
+        {
+          id: 'SV-2048',
+          title: 'Artisan Pizza Family Pack',
+          vendor: 'Joe\'s Pizzeria',
+          amount: 42.50,
+          status: 'pending',
+          delivery: 'Arriving today, 6:30 PM',
+          summary: 'Fresh family-size order with same-day local dispatch.'
+        },
+        {
+          id: 'SV-1932',
+          title: 'Phone Accessories Bundle',
+          vendor: 'Tech Store',
+          amount: 28.99,
+          status: 'shipped',
+          delivery: 'Tomorrow, 2:00 PM',
+          summary: 'Shipment is in transit and moving through the local delivery route.'
+        },
+        {
+          id: 'SV-1744',
+          title: 'Indoor Plants Starter Set',
+          vendor: 'Green Garden',
+          amount: 54.00,
+          status: 'delivered',
+          delivery: 'Delivered on Mar 22',
+          summary: 'Order delivered successfully with care instructions included.'
+        }
+      ];
+    }
+
+    function getOrdersData() {
+      const stored = readListStore('sv-orders');
+      if (stored.length) return stored;
+      const seeded = getDefaultOrders();
+      writeListStore('sv-orders', seeded);
+      return seeded;
+    }
+
+    function writeOrdersData(orders) {
+      writeListStore('sv-orders', orders);
+    }
+
+    function closeOrdersModal() {
+      ordersModalBackdrop.style.display = 'none';
+    }
+
+    function getOrderBadgeClass(status) {
+      if (status === 'pending') return 'orders-badge pending';
+      if (status === 'shipped') return 'orders-badge shipped';
+      if (status === 'cancelled') return 'orders-badge cancelled';
+      return 'orders-badge delivered';
+    }
+
+    function updateOrdersHero(order) {
+      if (!order) {
+        ordersHeroTitle.textContent = 'No orders available';
+        ordersHeroStatus.className = 'orders-badge delivered';
+        ordersHeroStatus.textContent = 'Ready';
+        ordersHeroDesc.textContent = 'Recent orders will appear here once available.';
+        ordersHeroId.textContent = '-';
+        ordersHeroAmount.textContent = '$0.00';
+        ordersHeroDelivery.textContent = 'Not scheduled';
+        return;
+      }
+      ordersHeroTitle.textContent = order.title;
+      ordersHeroStatus.className = getOrderBadgeClass(order.status);
+      ordersHeroStatus.textContent = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+      ordersHeroDesc.textContent = order.summary;
+      ordersHeroId.textContent = order.id;
+      ordersHeroAmount.textContent = `$${Number(order.amount || 0).toFixed(2)}`;
+      ordersHeroDelivery.textContent = order.delivery;
+    }
+
+    function renderOrdersModal(focusOrderId) {
+      accountTaskPanel.style.display = 'none';
+      closePaymentModal();
+      closeLiveChatModal();
+      const orders = getOrdersData();
+      const activeOrder = orders.find((order) => order.id === focusOrderId) || orders[0] || null;
+      const openOrders = orders.filter((order) => order.status === 'pending' || order.status === 'shipped').length;
+      const deliveredOrders = orders.filter((order) => order.status === 'delivered').length;
+      const nextDeliveryOrder = orders.find((order) => order.status === 'pending' || order.status === 'shipped') || null;
+
+      ordersOpenCount.textContent = `${openOrders}`;
+      ordersDeliveredCount.textContent = `${deliveredOrders}`;
+      ordersNextDelivery.textContent = nextDeliveryOrder ? nextDeliveryOrder.delivery : 'No active delivery';
+      updateOrdersHero(activeOrder);
+
+      ordersGrid.innerHTML = '';
+      orders.forEach((order) => {
+        const card = document.createElement('article');
+        card.className = 'order-card';
+
+        const head = document.createElement('div');
+        head.className = 'order-card-head';
+        head.innerHTML = `<div><div class="order-card-title">${order.title}</div><div style="font-size:12px; color:var(--muted);">${order.id}</div></div><span class="${getOrderBadgeClass(order.status)}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>`;
+
+        const meta = document.createElement('div');
+        meta.className = 'order-card-meta';
+        meta.innerHTML = `<span>Vendor: ${order.vendor}</span><span>Amount: $${Number(order.amount || 0).toFixed(2)}</span><span>${order.delivery}</span>`;
+
+        const actions = document.createElement('div');
+        actions.className = 'order-card-actions';
+
+        const trackBtn = document.createElement('button');
+        trackBtn.type = 'button';
+        trackBtn.className = 'small-btn';
+        trackBtn.textContent = 'Track Order';
+        trackBtn.addEventListener('click', () => {
+          updateOrdersHero(order);
+          showToast(`Tracking ${order.id}.`);
+        });
+        actions.appendChild(trackBtn);
+
+        if (order.status === 'pending') {
+          const cancelBtn = document.createElement('button');
+          cancelBtn.type = 'button';
+          cancelBtn.className = 'small-btn';
+          cancelBtn.textContent = 'Cancel Order';
+          cancelBtn.addEventListener('click', () => {
+            const updatedOrders = getOrdersData().map((item) => item.id === order.id
+              ? { ...item, status: 'cancelled', delivery: 'Cancelled today', summary: 'This order was cancelled before dispatch.' }
+              : item);
+            writeOrdersData(updatedOrders);
+            showToast(`Order ${order.id} cancelled.`);
+            renderOrdersModal(order.id);
+          });
+          actions.appendChild(cancelBtn);
+        }
+
+        const browseBtn = document.createElement('button');
+        browseBtn.type = 'button';
+        browseBtn.className = 'small-btn';
+        browseBtn.textContent = 'Go to Products';
+        browseBtn.addEventListener('click', () => {
+          closeOrdersModal();
+          document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' });
+        });
+        actions.appendChild(browseBtn);
+
+        card.appendChild(head);
+        card.appendChild(meta);
+        card.appendChild(actions);
+        ordersGrid.appendChild(card);
+      });
+
+      ordersModalBackdrop.style.display = 'flex';
+    }
     function readPaymentMethods() {
       return readListStore('sv-payment-methods');
     }
@@ -1919,12 +2301,7 @@
         return;
       }
       if (featureKey === 'orders') {
-        openTaskPanel(
-          'Orders',
-          'Track and manage your recent purchases.',
-          ['View current orders', 'Track active shipment', 'Cancel pending order'],
-          [{ label: 'Go to products', onClick: () => document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' }) }]
-        );
+        renderOrdersModal();
         return;
       }
       if (featureKey === 'recommendations') {
@@ -2198,6 +2575,7 @@
       if (event.key === 'Escape') {
         accountMenu.classList.remove('open');
         profileMenu.classList.remove('open');
+        closeOrdersModal();
         closePaymentModal();
         closeLiveChatModal();
       }
@@ -2207,6 +2585,12 @@
       el.addEventListener('input', refreshPostPreview);
     });
 
+    closeOrdersModalBtn.addEventListener('click', closeOrdersModal);
+    ordersModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === ordersModalBackdrop) {
+        closeOrdersModal();
+      }
+    });
     closePostProductModalBtn.addEventListener('click', closePostProductModal);
     cancelPostProductBtn.addEventListener('click', closePostProductModal);
     postProductModalBackdrop.addEventListener('click', (event) => {
