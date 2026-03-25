@@ -1206,6 +1206,166 @@
       font-size: 12px;
       color: var(--muted);
     }
+    .profile-quick-modal {
+      width: min(1020px, 100%);
+      background:
+        radial-gradient(circle at top right, rgba(245, 158, 11, 0.14), transparent 26%),
+        linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+    }
+
+    .profile-quick-body {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 18px;
+      padding: 18px;
+      min-height: 540px;
+    }
+
+    .profile-quick-side {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #101a2e 0%, #1f3b68 100%);
+      color: #eef4ff;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .profile-quick-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .profile-quick-side h4 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .profile-quick-side p {
+      margin: 0;
+      color: rgba(238, 244, 255, 0.8);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .profile-quick-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .profile-quick-pill {
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      color: #eef4ff;
+    }
+
+    .profile-quick-summary {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      display: grid;
+      gap: 8px;
+    }
+
+    .profile-quick-main {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .profile-quick-hero {
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(135deg, #fff7ed 0%, #ffffff 52%, #f8fbff 100%);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .profile-quick-hero h4 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      color: var(--ink);
+    }
+
+    .profile-quick-hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .profile-quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .profile-quick-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      display: grid;
+      gap: 12px;
+    }
+
+    .profile-quick-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .profile-quick-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #92400e;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .profile-quick-card-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .profile-quick-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .profile-quick-card button {
+      justify-self: start;
+    }
     .feature-toast {
       position: fixed;
       right: 16px;
@@ -1237,6 +1397,8 @@
       .catalog-header { grid-template-columns: 1fr; }
       .feature-modal-body { grid-template-columns: 1fr; }
       .product-form-grid { grid-template-columns: 1fr; }
+      .profile-quick-body { grid-template-columns: 1fr; }
+      .profile-quick-grid { grid-template-columns: 1fr; }
       .subscribe-modal-body { grid-template-columns: 1fr; }
       .subscribe-hero-meta { grid-template-columns: 1fr; }
       .payment-modal-body { grid-template-columns: 1fr; }
@@ -1453,6 +1615,41 @@
             </div>
           </article>
           <div id="ordersGrid" class="orders-grid"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div id="profileQuickModalBackdrop" class="feature-modal-backdrop">
+    <div class="feature-modal profile-quick-modal">
+      <div class="feature-modal-head">
+        <div>
+          <h3 style="margin:0;">Profile Quick Actions</h3>
+          <p style="margin:4px 0 0; color:var(--muted); font-size:13px;">Reach your most-used profile tools from one polished workspace.</p>
+        </div>
+        <button id="closeProfileQuickModalBtn" type="button" class="feature-modal-close" aria-label="Close">x</button>
+      </div>
+      <div class="profile-quick-body">
+        <aside class="profile-quick-side">
+          <div class="profile-quick-avatar" id="profileQuickAvatar">SV</div>
+          <div>
+            <h4 id="profileQuickName">Your Profile</h4>
+            <p id="profileQuickSubtitle">Quick access to account actions, support, payments, and your role-based tools.</p>
+          </div>
+          <div class="profile-quick-pill-row">
+            <span class="profile-quick-pill" id="profileQuickTypePill">Buyer Account</span>
+            <span class="profile-quick-pill">Fast Access</span>
+          </div>
+          <div class="profile-quick-summary">
+            <strong style="font-size:15px;">Action Center</strong>
+            <p id="profileQuickSummary">Your account shortcuts are grouped here so they are visible and easy to use.</p>
+          </div>
+        </aside>
+        <section class="profile-quick-main">
+          <article class="profile-quick-hero">
+            <h4>Manage profile actions without digging through menus</h4>
+            <p>Choose a tool below to open payments, support, seller controls, orders, or account logout from a single modern panel.</p>
+          </article>
+          <div id="profileQuickGrid" class="profile-quick-grid"></div>
         </section>
       </div>
     </div>
@@ -1689,6 +1886,14 @@
     const ordersHeroAmount = document.getElementById('ordersHeroAmount');
     const ordersHeroDelivery = document.getElementById('ordersHeroDelivery');
     const ordersGrid = document.getElementById('ordersGrid');
+    const profileQuickModalBackdrop = document.getElementById('profileQuickModalBackdrop');
+    const closeProfileQuickModalBtn = document.getElementById('closeProfileQuickModalBtn');
+    const profileQuickAvatar = document.getElementById('profileQuickAvatar');
+    const profileQuickName = document.getElementById('profileQuickName');
+    const profileQuickSubtitle = document.getElementById('profileQuickSubtitle');
+    const profileQuickTypePill = document.getElementById('profileQuickTypePill');
+    const profileQuickSummary = document.getElementById('profileQuickSummary');
+    const profileQuickGrid = document.getElementById('profileQuickGrid');
     const subscribeModalBackdrop = document.getElementById('subscribeModalBackdrop');
     const closeSubscribeModalBtn = document.getElementById('closeSubscribeModalBtn');
     const subscribeActiveCount = document.getElementById('subscribeActiveCount');
@@ -2031,6 +2236,7 @@
 
     function openLiveChatModal() {
       accountTaskPanel.style.display = 'none';
+      closeProfileQuickModal();
       closeSubscribeModal();
       closePaymentModal();
       ensureChatStarterMessage();
@@ -2202,6 +2408,90 @@
       ordersModalBackdrop.style.display = 'none';
     }
 
+    function closeProfileQuickModal() {
+      profileQuickModalBackdrop.style.display = 'none';
+    }
+
+    function openProfileQuickActionsModal() {
+      accountTaskPanel.style.display = 'none';
+      closeOrdersModal();
+      closeSubscribeModal();
+      closePaymentModal();
+      closeLiveChatModal();
+
+      const initials = (currentDisplayName || 'SV').split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+      const isVendor = currentUserType === 'vendor';
+      profileQuickAvatar.textContent = initials || 'SV';
+      profileQuickName.textContent = currentDisplayName || 'Your Profile';
+      profileQuickSubtitle.textContent = isVendor
+        ? 'Seller tools, payments, support, and account actions are grouped here.'
+        : 'Orders, payments, support, and account actions are grouped here.';
+      profileQuickTypePill.textContent = isVendor ? 'Vendor Account' : 'Buyer Account';
+      profileQuickSummary.textContent = isVendor
+        ? 'Use quick actions to jump into posting products, payment options, support, or secure logout.'
+        : 'Use quick actions to jump into orders, payment options, support, or secure logout.';
+
+      const cards = isVendor
+        ? [
+            { key: 'post_products', icon: 'POST', title: 'Posting Products', desc: 'Open seller publishing tools and manage your next product listing.' },
+            { key: 'payment_options', icon: 'PAY', title: 'Payment Options', desc: 'Manage saved cards and default payment methods in your wallet.' },
+            { key: 'live_chat', icon: 'CHAT', title: 'Live Chat', desc: 'Start with the assistant, then hand off to support when needed.' },
+            { key: 'help_center', icon: 'HELP', title: 'Help Center', desc: 'Review support guidance, account help, and common seller questions.' },
+            { key: 'logout', icon: 'EXIT', title: 'Logout', desc: 'Securely end the current session from this panel.' }
+          ]
+        : [
+            { key: 'orders', icon: 'ORD', title: 'Orders', desc: 'Go straight to your order center for tracking and delivery updates.' },
+            { key: 'payment_options', icon: 'PAY', title: 'Payment Options', desc: 'Manage saved cards and default payment methods in your wallet.' },
+            { key: 'live_chat', icon: 'CHAT', title: 'Live Chat', desc: 'Start with the assistant, then hand off to support when needed.' },
+            { key: 'help_center', icon: 'HELP', title: 'Help Center', desc: 'Review support guidance, account help, and common shopping questions.' },
+            { key: 'logout', icon: 'EXIT', title: 'Logout', desc: 'Securely end the current session from this panel.' }
+          ];
+
+      profileQuickGrid.innerHTML = '';
+      cards.forEach((card) => {
+        const item = document.createElement('article');
+        item.className = 'profile-quick-card';
+
+        const head = document.createElement('div');
+        head.className = 'profile-quick-card-head';
+
+        const copy = document.createElement('div');
+        const title = document.createElement('h5');
+        title.className = 'profile-quick-card-title';
+        title.textContent = card.title;
+        const desc = document.createElement('p');
+        desc.textContent = card.desc;
+        copy.appendChild(title);
+        copy.appendChild(desc);
+
+        const icon = document.createElement('span');
+        icon.className = 'profile-quick-icon';
+        icon.textContent = card.icon;
+
+        head.appendChild(copy);
+        head.appendChild(icon);
+        item.appendChild(head);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = card.key === 'logout' ? 'btn-ghost' : 'small-btn';
+        btn.textContent = card.key === 'logout' ? 'Logout' : 'Open';
+        btn.addEventListener('click', () => {
+          closeProfileQuickModal();
+          if (card.key === 'orders') {
+            renderOrdersModal();
+            return;
+          }
+          handleFeatureAction(card.key);
+        });
+
+        item.appendChild(btn);
+        profileQuickGrid.appendChild(item);
+      });
+
+      profileQuickModalBackdrop.style.display = 'flex';
+    }
+
     function getOrderBadgeClass(status) {
       if (status === 'pending') return 'orders-badge pending';
       if (status === 'shipped') return 'orders-badge shipped';
@@ -2231,6 +2521,7 @@
 
     function renderOrdersModal(focusOrderId) {
       accountTaskPanel.style.display = 'none';
+      closeProfileQuickModal();
       closeSubscribeModal();
       closePaymentModal();
       closeLiveChatModal();
@@ -2543,6 +2834,7 @@
     }
 
     function renderPaymentOptionsPanel() {
+      closeProfileQuickModal();
       const methods = readPaymentMethods();
       const defaultMethod = methods.find((method) => method.isDefault) || methods[0] || null;
 
@@ -2730,8 +3022,7 @@
         return;
       }
       if (featureKey === 'profile_quick_actions') {
-        profileMenu.classList.add('open');
-        showToast('Profile quick actions opened.');
+        openProfileQuickActionsModal();
         return;
       }
       if (featureKey === 'shopping_preferences') {
@@ -2943,6 +3234,7 @@
         accountMenu.classList.remove('open');
         profileMenu.classList.remove('open');
         closeOrdersModal();
+        closeProfileQuickModal();
         closeSubscribeModal();
         closePaymentModal();
         closeLiveChatModal();
@@ -2954,6 +3246,12 @@
     });
 
     closeOrdersModalBtn.addEventListener('click', closeOrdersModal);
+    closeProfileQuickModalBtn.addEventListener('click', closeProfileQuickModal);
+    profileQuickModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === profileQuickModalBackdrop) {
+        closeProfileQuickModal();
+      }
+    });
     ordersModalBackdrop.addEventListener('click', (event) => {
       if (event.target === ordersModalBackdrop) {
         closeOrdersModal();
