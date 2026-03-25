@@ -702,7 +702,151 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-    }    .payment-modal {
+    }
+    .subscribe-modal {
+      width: min(1040px, 100%);
+      background:
+        radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 24%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+    .subscribe-modal-body {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      padding: 18px;
+      min-height: 560px;
+    }
+    .subscribe-side {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #052e2b 0%, #0f172a 100%);
+      color: #ecfeff;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+    .subscribe-side h4 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .subscribe-side p {
+      margin: 0;
+      color: rgba(236, 254, 255, 0.78);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .subscribe-stat {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .subscribe-stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 16px;
+    }
+    .subscribe-main {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+    .subscribe-hero {
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 55%, #f8fbff 100%);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+    }
+    .subscribe-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .subscribe-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .subscribe-badge.active {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .subscribe-badge.paused {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .subscribe-badge.cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .subscribe-hero h4 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+    .subscribe-hero-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .subscribe-hero-meta div {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .subscribe-hero-meta strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    .subscriptions-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .subscription-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      display: grid;
+      gap: 10px;
+    }
+    .subscription-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .subscription-card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+    .subscription-card-meta {
+      display: grid;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .subscription-card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .payment-modal {
       width: min(980px, 100%);
       background:
         radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 28%),
@@ -1093,6 +1237,8 @@
       .catalog-header { grid-template-columns: 1fr; }
       .feature-modal-body { grid-template-columns: 1fr; }
       .product-form-grid { grid-template-columns: 1fr; }
+      .subscribe-modal-body { grid-template-columns: 1fr; }
+      .subscribe-hero-meta { grid-template-columns: 1fr; }
       .payment-modal-body { grid-template-columns: 1fr; }
       .payment-form-grid { grid-template-columns: 1fr; }
       .chat-modal-body { grid-template-columns: 1fr; }
@@ -1311,6 +1457,55 @@
       </div>
     </div>
   </div>
+  <div id="subscribeModalBackdrop" class="feature-modal-backdrop">
+    <div class="feature-modal subscribe-modal">
+      <div class="feature-modal-head">
+        <div>
+          <h3 style="margin:0;">Subscribe & Save Items</h3>
+          <p style="margin:4px 0 0; color:var(--muted); font-size:13px;">Manage recurring deliveries, next shipment dates, and subscription status in one place.</p>
+        </div>
+        <button id="closeSubscribeModalBtn" type="button" class="feature-modal-close" aria-label="Close">x</button>
+      </div>
+      <div class="subscribe-modal-body">
+        <aside class="subscribe-side">
+          <div>
+            <h4>Subscription Hub</h4>
+            <p>Review active plans, pause upcoming deliveries, or cancel any recurring order from this dedicated view.</p>
+          </div>
+          <div class="subscribe-stat">
+            Active Plans
+            <strong id="subscribeActiveCount">0</strong>
+          </div>
+          <div class="subscribe-stat">
+            Paused Plans
+            <strong id="subscribePausedCount">0</strong>
+          </div>
+          <div class="subscribe-stat">
+            Next Delivery
+            <strong id="subscribeNextDelivery">No upcoming delivery</strong>
+          </div>
+        </aside>
+        <section class="subscribe-main">
+          <article class="subscribe-hero">
+            <div class="subscribe-hero-top">
+              <div>
+                <div style="font-size:12px; color:var(--muted);">Featured plan</div>
+                <h4 id="subscribeHeroTitle">No subscription selected</h4>
+              </div>
+              <span id="subscribeHeroStatus" class="subscribe-badge active">Ready</span>
+            </div>
+            <p id="subscribeHeroDesc" style="margin:0; color:var(--muted); font-size:14px;">Your recurring purchase details will appear here.</p>
+            <div class="subscribe-hero-meta">
+              <div>Plan ID<strong id="subscribeHeroId">-</strong></div>
+              <div>Cadence<strong id="subscribeHeroCadence">-</strong></div>
+              <div>Next Delivery<strong id="subscribeHeroDelivery">Not scheduled</strong></div>
+            </div>
+          </article>
+          <div id="subscriptionsGrid" class="subscriptions-grid"></div>
+        </section>
+      </div>
+    </div>
+  </div>
   <div id="paymentModalBackdrop" class="feature-modal-backdrop">
     <div class="feature-modal payment-modal">
       <div class="feature-modal-head">
@@ -1494,6 +1689,18 @@
     const ordersHeroAmount = document.getElementById('ordersHeroAmount');
     const ordersHeroDelivery = document.getElementById('ordersHeroDelivery');
     const ordersGrid = document.getElementById('ordersGrid');
+    const subscribeModalBackdrop = document.getElementById('subscribeModalBackdrop');
+    const closeSubscribeModalBtn = document.getElementById('closeSubscribeModalBtn');
+    const subscribeActiveCount = document.getElementById('subscribeActiveCount');
+    const subscribePausedCount = document.getElementById('subscribePausedCount');
+    const subscribeNextDelivery = document.getElementById('subscribeNextDelivery');
+    const subscribeHeroTitle = document.getElementById('subscribeHeroTitle');
+    const subscribeHeroStatus = document.getElementById('subscribeHeroStatus');
+    const subscribeHeroDesc = document.getElementById('subscribeHeroDesc');
+    const subscribeHeroId = document.getElementById('subscribeHeroId');
+    const subscribeHeroCadence = document.getElementById('subscribeHeroCadence');
+    const subscribeHeroDelivery = document.getElementById('subscribeHeroDelivery');
+    const subscriptionsGrid = document.getElementById('subscriptionsGrid');
     const paymentModalBackdrop = document.getElementById('paymentModalBackdrop');
     const closePaymentModalBtn = document.getElementById('closePaymentModalBtn');
     const cancelPaymentModalBtn = document.getElementById('cancelPaymentModalBtn');
@@ -1533,13 +1740,15 @@
       'sv-watchlist': 'watchlist',
       'sv-browsing-history': 'browsingHistory',
       'sv-payment-methods': 'paymentMethods',
-      'sv-chat-history': 'chatHistory'
+      'sv-chat-history': 'chatHistory',
+      'sv-subscriptions': 'subscriptions'
     };
     const PREF_DEFAULTS = {
       watchlist: [],
       browsingHistory: [],
       paymentMethods: [],
       chatHistory: [],
+      subscriptions: [],
       supportRequested: false,
       preferredDepartment: 'all',
       recentActions: [],
@@ -1558,6 +1767,7 @@
         browsingHistory: safeArray(rawPrefs.browsingHistory),
         paymentMethods: safeArray(rawPrefs.paymentMethods),
         chatHistory: safeArray(rawPrefs.chatHistory),
+        subscriptions: safeArray(rawPrefs.subscriptions),
         supportRequested: rawPrefs.supportRequested === true,
         preferredDepartment,
         recentActions: safeArray(rawPrefs.recentActions),
@@ -1571,6 +1781,7 @@
       localStorage.setItem('sv-browsing-history', JSON.stringify(userPrefs.browsingHistory));
       localStorage.setItem('sv-payment-methods', JSON.stringify(userPrefs.paymentMethods));
       localStorage.setItem('sv-chat-history', JSON.stringify(userPrefs.chatHistory));
+      localStorage.setItem('sv-subscriptions', JSON.stringify(userPrefs.subscriptions));
       localStorage.setItem('sv-support-requested', userPrefs.supportRequested ? '1' : '0');
       localStorage.setItem('sv-preferred-department', userPrefs.preferredDepartment || 'all');
     }
@@ -1587,6 +1798,7 @@
           browsingHistory: JSON.parse(localStorage.getItem('sv-browsing-history') || '[]'),
           paymentMethods: JSON.parse(localStorage.getItem('sv-payment-methods') || '[]'),
           chatHistory: JSON.parse(localStorage.getItem('sv-chat-history') || '[]'),
+          subscriptions: JSON.parse(localStorage.getItem('sv-subscriptions') || '[]'),
           supportRequested: localStorage.getItem('sv-support-requested') === '1',
           preferredDepartment: localStorage.getItem('sv-preferred-department') || 'all'
         });
@@ -1819,6 +2031,7 @@
 
     function openLiveChatModal() {
       accountTaskPanel.style.display = 'none';
+      closeSubscribeModal();
       closePaymentModal();
       ensureChatStarterMessage();
       renderLiveChatConversation();
@@ -2018,6 +2231,7 @@
 
     function renderOrdersModal(focusOrderId) {
       accountTaskPanel.style.display = 'none';
+      closeSubscribeModal();
       closePaymentModal();
       closeLiveChatModal();
       const orders = getOrdersData();
@@ -2091,6 +2305,161 @@
 
       ordersModalBackdrop.style.display = 'flex';
     }
+    function getDefaultSubscriptions() {
+      return [
+        {
+          id: 'SUB-301',
+          title: 'Coffee Beans Monthly Refill',
+          cadence: 'Every 30 days',
+          delivery: 'Apr 03',
+          status: 'active',
+          description: 'Fresh premium arabica beans delivered automatically every month.'
+        },
+        {
+          id: 'SUB-218',
+          title: 'Organic Cosmetics Routine',
+          cadence: 'Every 14 days',
+          delivery: 'Paused',
+          status: 'paused',
+          description: 'Biweekly restock plan for skincare and beauty essentials.'
+        },
+        {
+          id: 'SUB-177',
+          title: 'Custom Cakes Celebration Plan',
+          cadence: 'Every 60 days',
+          delivery: 'May 10',
+          status: 'active',
+          description: 'Recurring celebration order with flexible delivery scheduling.'
+        }
+      ];
+    }
+
+    function getSubscriptionsData() {
+      const stored = readListStore('sv-subscriptions');
+      if (stored.length) return stored;
+      const seeded = getDefaultSubscriptions();
+      writeListStore('sv-subscriptions', seeded);
+      return seeded;
+    }
+
+    function writeSubscriptionsData(subscriptions) {
+      writeListStore('sv-subscriptions', subscriptions);
+    }
+
+    function closeSubscribeModal() {
+      subscribeModalBackdrop.style.display = 'none';
+    }
+
+    function getSubscriptionBadgeClass(status) {
+      if (status === 'paused') return 'subscribe-badge paused';
+      if (status === 'cancelled') return 'subscribe-badge cancelled';
+      return 'subscribe-badge active';
+    }
+
+    function updateSubscribeHero(plan) {
+      if (!plan) {
+        subscribeHeroTitle.textContent = 'No subscription selected';
+        subscribeHeroStatus.className = 'subscribe-badge active';
+        subscribeHeroStatus.textContent = 'Ready';
+        subscribeHeroDesc.textContent = 'Your recurring purchase details will appear here.';
+        subscribeHeroId.textContent = '-';
+        subscribeHeroCadence.textContent = '-';
+        subscribeHeroDelivery.textContent = 'Not scheduled';
+        return;
+      }
+
+      subscribeHeroTitle.textContent = plan.title;
+      subscribeHeroStatus.className = getSubscriptionBadgeClass(plan.status);
+      subscribeHeroStatus.textContent = plan.status.charAt(0).toUpperCase() + plan.status.slice(1);
+      subscribeHeroDesc.textContent = plan.description;
+      subscribeHeroId.textContent = plan.id;
+      subscribeHeroCadence.textContent = plan.cadence;
+      subscribeHeroDelivery.textContent = plan.delivery;
+    }
+
+    function renderSubscribeModal(focusPlanId) {
+      accountTaskPanel.style.display = 'none';
+      closeOrdersModal();
+      closePaymentModal();
+      closeLiveChatModal();
+      const plans = getSubscriptionsData();
+      const activePlan = plans.find((plan) => plan.id === focusPlanId) || plans[0] || null;
+      const activeCount = plans.filter((plan) => plan.status === 'active').length;
+      const pausedCount = plans.filter((plan) => plan.status === 'paused').length;
+      const nextPlan = plans.find((plan) => plan.status === 'active') || null;
+
+      subscribeActiveCount.textContent = `${activeCount}`;
+      subscribePausedCount.textContent = `${pausedCount}`;
+      subscribeNextDelivery.textContent = nextPlan ? nextPlan.delivery : 'No upcoming delivery';
+      updateSubscribeHero(activePlan);
+
+      subscriptionsGrid.innerHTML = '';
+      plans.forEach((plan) => {
+        const card = document.createElement('article');
+        card.className = 'subscription-card';
+
+        const head = document.createElement('div');
+        head.className = 'subscription-card-head';
+        head.innerHTML = `<div><div class="subscription-card-title">${plan.title}</div><div style="font-size:12px; color:var(--muted);">${plan.id}</div></div><span class="${getSubscriptionBadgeClass(plan.status)}">${plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}</span>`;
+
+        const meta = document.createElement('div');
+        meta.className = 'subscription-card-meta';
+        meta.innerHTML = `<span>Cadence: ${plan.cadence}</span><span>Next delivery: ${plan.delivery}</span><span>${plan.description}</span>`;
+
+        const actions = document.createElement('div');
+        actions.className = 'subscription-card-actions';
+
+        const viewBtn = document.createElement('button');
+        viewBtn.type = 'button';
+        viewBtn.className = 'small-btn';
+        viewBtn.textContent = 'View Plan';
+        viewBtn.addEventListener('click', () => {
+          updateSubscribeHero(plan);
+          showToast(`Viewing ${plan.id}.`);
+        });
+        actions.appendChild(viewBtn);
+
+        if (plan.status === 'active' || plan.status === 'paused') {
+          const pauseBtn = document.createElement('button');
+          pauseBtn.type = 'button';
+          pauseBtn.className = 'small-btn';
+          pauseBtn.textContent = plan.status === 'active' ? 'Pause Plan' : 'Resume Plan';
+          pauseBtn.addEventListener('click', () => {
+            const updatedPlans = getSubscriptionsData().map((item) => item.id === plan.id
+              ? { ...item, status: item.status === 'active' ? 'paused' : 'active', delivery: item.status === 'active' ? 'Paused' : 'Apr 12' }
+              : item);
+            writeSubscriptionsData(updatedPlans);
+            showToast(`Subscription ${plan.id} updated.`);
+            renderSubscribeModal(plan.id);
+          });
+          actions.appendChild(pauseBtn);
+        }
+
+        if (plan.status !== 'cancelled') {
+          const cancelBtn = document.createElement('button');
+          cancelBtn.type = 'button';
+          cancelBtn.className = 'small-btn';
+          cancelBtn.textContent = 'Cancel Plan';
+          cancelBtn.addEventListener('click', () => {
+            const updatedPlans = getSubscriptionsData().map((item) => item.id === plan.id
+              ? { ...item, status: 'cancelled', delivery: 'Cancelled', description: 'This recurring purchase has been cancelled.' }
+              : item);
+            writeSubscriptionsData(updatedPlans);
+            showToast(`Subscription ${plan.id} cancelled.`);
+            renderSubscribeModal(plan.id);
+          });
+          actions.appendChild(cancelBtn);
+        }
+
+        card.appendChild(head);
+        card.appendChild(meta);
+        card.appendChild(actions);
+        subscriptionsGrid.appendChild(card);
+      });
+
+      subscribeModalBackdrop.style.display = 'flex';
+    }
+
     function readPaymentMethods() {
       return readListStore('sv-payment-methods');
     }
@@ -2196,6 +2565,7 @@
         });
       }
 
+      closeSubscribeModal();
       closeLiveChatModal();
       paymentModalBackdrop.style.display = 'flex';
     }
@@ -2254,6 +2624,7 @@
         localStorage.removeItem('sv-preferred-department');
         localStorage.removeItem('sv-payment-methods');
         localStorage.removeItem('sv-chat-history');
+        localStorage.removeItem('sv-subscriptions');
         localStorage.removeItem('sv-support-requested');
         localStorage.removeItem('sv-recent-searches');
         userPrefs = { ...PREF_DEFAULTS };
@@ -2429,11 +2800,7 @@
         return;
       }
       if (featureKey === 'subscribe_save') {
-        openTaskPanel(
-          'Subscribe & Save Items',
-          'Manage recurring purchases and delivery cadence.',
-          ['Active subscriptions', 'Next delivery schedule', 'Pause or cancel subscription']
-        );
+        renderSubscribeModal();
         return;
       }
       showToast('Feature ready.');
@@ -2576,6 +2943,7 @@
         accountMenu.classList.remove('open');
         profileMenu.classList.remove('open');
         closeOrdersModal();
+        closeSubscribeModal();
         closePaymentModal();
         closeLiveChatModal();
       }
@@ -2589,6 +2957,12 @@
     ordersModalBackdrop.addEventListener('click', (event) => {
       if (event.target === ordersModalBackdrop) {
         closeOrdersModal();
+      }
+    });
+    closeSubscribeModalBtn.addEventListener('click', closeSubscribeModal);
+    subscribeModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === subscribeModalBackdrop) {
+        closeSubscribeModal();
       }
     });
     closePostProductModalBtn.addEventListener('click', closePostProductModal);
