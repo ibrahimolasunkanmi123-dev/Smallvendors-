@@ -1206,6 +1206,147 @@
       font-size: 12px;
       color: var(--muted);
     }
+    .help-center-modal {
+      width: min(1040px, 100%);
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 24%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .help-center-body {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 18px;
+      padding: 18px;
+      min-height: 560px;
+    }
+
+    .help-center-side {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #0f172a 0%, #1d4ed8 100%);
+      color: #eff6ff;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .help-center-side h4 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .help-center-side p {
+      margin: 0;
+      color: rgba(239, 246, 255, 0.82);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .help-center-stat {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .help-center-stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 16px;
+    }
+
+    .help-center-main {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .help-center-hero {
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 55%, #f8fbff 100%);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .help-center-hero h4 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      color: var(--ink);
+    }
+
+    .help-center-hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .help-center-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .help-topic-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      display: grid;
+      gap: 12px;
+    }
+
+    .help-topic-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .help-topic-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .help-topic-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .help-topic-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .help-topic-links {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .help-topic-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
     .profile-quick-modal {
       width: min(1020px, 100%);
       background:
@@ -1397,6 +1538,8 @@
       .catalog-header { grid-template-columns: 1fr; }
       .feature-modal-body { grid-template-columns: 1fr; }
       .product-form-grid { grid-template-columns: 1fr; }
+      .help-center-body { grid-template-columns: 1fr; }
+      .help-center-grid { grid-template-columns: 1fr; }
       .profile-quick-body { grid-template-columns: 1fr; }
       .profile-quick-grid { grid-template-columns: 1fr; }
       .subscribe-modal-body { grid-template-columns: 1fr; }
@@ -1615,6 +1758,44 @@
             </div>
           </article>
           <div id="ordersGrid" class="orders-grid"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div id="helpCenterModalBackdrop" class="feature-modal-backdrop">
+    <div class="feature-modal help-center-modal">
+      <div class="feature-modal-head">
+        <div>
+          <h3 style="margin:0;">Help Center</h3>
+          <p style="margin:4px 0 0; color:var(--muted); font-size:13px;">Browse support topics, quick answers, and direct actions from one dedicated workspace.</p>
+        </div>
+        <button id="closeHelpCenterModalBtn" type="button" class="feature-modal-close" aria-label="Close">x</button>
+      </div>
+      <div class="help-center-body">
+        <aside class="help-center-side">
+          <div>
+            <h4>Support Hub</h4>
+            <p>Find help for account access, orders, returns, and privacy without dropping back into the home page.</p>
+          </div>
+          <div class="help-center-stat">
+            Core Topics
+            <strong>3 support guides</strong>
+          </div>
+          <div class="help-center-stat">
+            Fast Path
+            <strong>Live chat available</strong>
+          </div>
+          <div class="help-center-stat">
+            Coverage
+            <strong>Account, orders, privacy</strong>
+          </div>
+        </aside>
+        <section class="help-center-main">
+          <article class="help-center-hero">
+            <h4>Choose a support topic and continue with the right next step</h4>
+            <p>The help center organizes common issues into clear sections so users can self-serve quickly or move into live support when needed.</p>
+          </article>
+          <div id="helpCenterGrid" class="help-center-grid"></div>
         </section>
       </div>
     </div>
@@ -1886,6 +2067,9 @@
     const ordersHeroAmount = document.getElementById('ordersHeroAmount');
     const ordersHeroDelivery = document.getElementById('ordersHeroDelivery');
     const ordersGrid = document.getElementById('ordersGrid');
+    const helpCenterModalBackdrop = document.getElementById('helpCenterModalBackdrop');
+    const closeHelpCenterModalBtn = document.getElementById('closeHelpCenterModalBtn');
+    const helpCenterGrid = document.getElementById('helpCenterGrid');
     const profileQuickModalBackdrop = document.getElementById('profileQuickModalBackdrop');
     const closeProfileQuickModalBtn = document.getElementById('closeProfileQuickModalBtn');
     const profileQuickAvatar = document.getElementById('profileQuickAvatar');
@@ -2236,6 +2420,7 @@
 
     function openLiveChatModal() {
       accountTaskPanel.style.display = 'none';
+      closeHelpCenterModal();
       closeProfileQuickModal();
       closeSubscribeModal();
       closePaymentModal();
@@ -2408,6 +2593,124 @@
       ordersModalBackdrop.style.display = 'none';
     }
 
+    function closeHelpCenterModal() {
+      helpCenterModalBackdrop.style.display = 'none';
+    }
+
+    function openHelpCenterModal() {
+      accountTaskPanel.style.display = 'none';
+      closeOrdersModal();
+      closeProfileQuickModal();
+      closeSubscribeModal();
+      closePaymentModal();
+      closeLiveChatModal();
+
+      const topics = [
+        {
+          icon: 'ACC',
+          title: 'Account Setup',
+          desc: 'Help with sign in, profile setup, account type, and updating your details.',
+          links: ['Sign in and account recovery', 'Profile details and settings', 'Account type guidance'],
+          actions: [
+            {
+              label: 'Open Live Chat',
+              onClick: () => openLiveChatModal()
+            },
+            {
+              label: 'Profile Actions',
+              onClick: () => openProfileQuickActionsModal()
+            }
+          ]
+        },
+        {
+          icon: 'ORD',
+          title: 'Orders and Returns',
+          desc: 'Review order progress, returns guidance, cancellations, and refund-related help.',
+          links: ['Track a current order', 'Cancel a pending order', 'Returns and refund guidance'],
+          actions: [
+            {
+              label: 'View Orders',
+              onClick: () => renderOrdersModal()
+            },
+            {
+              label: 'Open Live Chat',
+              onClick: () => openLiveChatModal()
+            }
+          ]
+        },
+        {
+          icon: 'SAFE',
+          title: 'Security and Privacy',
+          desc: 'Review account protection, privacy questions, and payment or session safety steps.',
+          links: ['Protect your password', 'Review active access issues', 'Privacy and billing questions'],
+          actions: [
+            {
+              label: 'Payment Options',
+              onClick: () => renderPaymentOptionsPanel()
+            },
+            {
+              label: 'Open Live Chat',
+              onClick: () => openLiveChatModal()
+            }
+          ]
+        }
+      ];
+
+      helpCenterGrid.innerHTML = '';
+      topics.forEach((topic) => {
+        const card = document.createElement('article');
+        card.className = 'help-topic-card';
+
+        const head = document.createElement('div');
+        head.className = 'help-topic-head';
+
+        const copy = document.createElement('div');
+        const title = document.createElement('h5');
+        title.className = 'help-topic-title';
+        title.textContent = topic.title;
+        const desc = document.createElement('p');
+        desc.textContent = topic.desc;
+        copy.appendChild(title);
+        copy.appendChild(desc);
+
+        const icon = document.createElement('span');
+        icon.className = 'help-topic-icon';
+        icon.textContent = topic.icon;
+
+        head.appendChild(copy);
+        head.appendChild(icon);
+
+        const linkList = document.createElement('div');
+        linkList.className = 'help-topic-links';
+        topic.links.forEach((entry) => {
+          const line = document.createElement('div');
+          line.textContent = entry;
+          linkList.appendChild(line);
+        });
+
+        const actions = document.createElement('div');
+        actions.className = 'help-topic-actions';
+        topic.actions.forEach((action) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'small-btn';
+          btn.textContent = action.label;
+          btn.addEventListener('click', () => {
+            closeHelpCenterModal();
+            action.onClick();
+          });
+          actions.appendChild(btn);
+        });
+
+        card.appendChild(head);
+        card.appendChild(linkList);
+        card.appendChild(actions);
+        helpCenterGrid.appendChild(card);
+      });
+
+      helpCenterModalBackdrop.style.display = 'flex';
+    }
+
     function closeProfileQuickModal() {
       profileQuickModalBackdrop.style.display = 'none';
     }
@@ -2521,6 +2824,7 @@
 
     function renderOrdersModal(focusOrderId) {
       accountTaskPanel.style.display = 'none';
+      closeHelpCenterModal();
       closeProfileQuickModal();
       closeSubscribeModal();
       closePaymentModal();
@@ -2834,6 +3138,7 @@
     }
 
     function renderPaymentOptionsPanel() {
+      closeHelpCenterModal();
       closeProfileQuickModal();
       const methods = readPaymentMethods();
       const defaultMethod = methods.find((method) => method.isDefault) || methods[0] || null;
@@ -2945,11 +3250,7 @@
         return;
       }
       if (featureKey === 'help_center') {
-        openTaskPanel(
-          'Help Center',
-          'Browse common help topics and account guides.',
-          ['Account setup', 'Order and returns', 'Security and privacy']
-        );
+        openHelpCenterModal();
         return;
       }
       localStorage.setItem('sv-profile-feature', featureKey);
@@ -3234,6 +3535,7 @@
         accountMenu.classList.remove('open');
         profileMenu.classList.remove('open');
         closeOrdersModal();
+        closeHelpCenterModal();
         closeProfileQuickModal();
         closeSubscribeModal();
         closePaymentModal();
@@ -3246,6 +3548,12 @@
     });
 
     closeOrdersModalBtn.addEventListener('click', closeOrdersModal);
+    closeHelpCenterModalBtn.addEventListener('click', closeHelpCenterModal);
+    helpCenterModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === helpCenterModalBackdrop) {
+        closeHelpCenterModal();
+      }
+    });
     closeProfileQuickModalBtn.addEventListener('click', closeProfileQuickModal);
     profileQuickModalBackdrop.addEventListener('click', (event) => {
       if (event.target === profileQuickModalBackdrop) {
