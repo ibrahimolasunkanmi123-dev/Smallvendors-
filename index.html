@@ -1557,7 +1557,6 @@
           <h4>Your Account</h4>
           <div class="account-list">
             <a href="#" data-account-feature="orders">Orders</a>
-            <a href="#" data-account-feature="recommendations">Recommendations</a>
             <a href="#" data-account-feature="browsing_history">Browsing History</a>
             <a href="#" data-account-feature="watchlist">Watchlist</a>
             <a href="#" data-account-feature="subscribe_save">Subscribe & Save Items</a>
@@ -3239,11 +3238,8 @@
         departmentSelect.value = 'all';
         globalSearchInput.value = '';
         filterProducts();
-        openTaskPanel(
-          'Recommendations',
-          'Product suggestions refreshed for your account.',
-          currentRenderedItems.slice(0, 4).map((item) => `${item.name} - $${item.price.toFixed(2)}`)
-        );
+        accountTaskPanel.style.display = 'none';
+        showToast('Recommendations refreshed.');
         return;
       }
       if (featureKey === 'browsing_history') {
