@@ -388,6 +388,181 @@
       border-bottom: 1px solid var(--line);
     }
 
+    .recommendations-modal {
+      width: min(980px, 100%);
+    }
+
+    .recommendations-head {
+      background:
+        linear-gradient(135deg, rgba(16, 26, 46, 0.96), rgba(26, 39, 68, 0.94)),
+        linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(255, 255, 255, 0));
+      color: #f8fafc;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .recommendations-kicker {
+      display: inline-block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(245, 158, 11, 0.9);
+      font-weight: 700;
+    }
+
+    .recommendations-title {
+      margin: 8px 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(28px, 4vw, 34px);
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+    }
+
+    .recommendations-head p {
+      margin: 6px 0 0;
+      color: rgba(226, 232, 240, 0.88);
+      font-size: 14px;
+    }
+
+    .recommendations-modal-body {
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+      background:
+        radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 30%),
+        linear-gradient(180deg, #fffdf7 0%, #f8fbff 100%);
+    }
+
+    .recommendations-hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid #e6dcc4;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 16px 32px rgba(16, 24, 40, 0.08);
+    }
+
+    .recommendations-copy h4 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      color: #18243f;
+    }
+
+    .recommendations-copy p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .recommendations-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-content: start;
+    }
+
+    .recommendations-meta-card {
+      border: 1px solid #e6dcc4;
+      border-radius: 14px;
+      padding: 12px;
+      background: linear-gradient(180deg, #fff, #fffaf0);
+    }
+
+    .recommendations-meta-card span {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #8b6f3d;
+      font-weight: 700;
+    }
+
+    .recommendations-meta-card strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 16px;
+      color: #18243f;
+    }
+
+    .recommendations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .recommendation-card {
+      border: 1px solid #e7edf7;
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 18px 34px rgba(16, 24, 40, 0.08);
+      display: grid;
+      gap: 12px;
+    }
+
+    .recommendation-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .recommendation-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fff1cc, #f8d58d);
+      color: #6b4f1d;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
+    .recommendation-chip {
+      border: 1px solid #ead8ad;
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #fff8e7;
+      color: #8b6f3d;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .recommendation-card h5 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      color: #18243f;
+    }
+
+    .recommendation-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .recommendation-card .meta {
+      margin-top: 2px;
+    }
+
+    .recommendation-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .recommendations-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
     .feature-modal-close {
       border: 1px solid var(--line);
       background: #fff;
@@ -1512,6 +1687,8 @@
 
       .search-wrap { grid-template-columns: 92px 1fr 52px; }
       .feature-modal-body { grid-template-columns: 1fr; }
+      .recommendations-hero { grid-template-columns: 1fr; }
+      .recommendations-meta { grid-template-columns: 1fr; }
       .product-form-grid { grid-template-columns: 1fr; }
       .help-center-body { grid-template-columns: 1fr; }
       .help-center-grid { grid-template-columns: 1fr; }
@@ -1557,6 +1734,7 @@
           <h4>Your Account</h4>
           <div class="account-list">
             <a href="#" data-account-feature="orders">Orders</a>
+            <a href="#" data-account-feature="recommendations">Recommendations</a>
             <a href="#" data-account-feature="browsing_history">Browsing History</a>
             <a href="#" data-account-feature="watchlist">Watchlist</a>
             <a href="#" data-account-feature="subscribe_save">Subscribe & Save Items</a>
@@ -1617,6 +1795,45 @@
       <div id="accountTaskActions" class="account-task-actions"></div>
     </article>
   </section>
+
+  <div id="recommendationsModalBackdrop" class="feature-modal-backdrop">
+    <div class="feature-modal recommendations-modal">
+      <div class="feature-modal-head recommendations-head">
+        <div>
+          <span class="recommendations-kicker">Modern Classics</span>
+          <h3 class="recommendations-title">Curated Recommendations</h3>
+          <p>Thoughtful picks that open on demand, without cluttering the home page.</p>
+        </div>
+        <button id="closeRecommendationsModalBtn" type="button" class="feature-modal-close" aria-label="Close">x</button>
+      </div>
+      <div class="recommendations-modal-body">
+        <section class="recommendations-hero">
+          <div class="recommendations-copy">
+            <h4 id="recommendationsHeroTitle">Timeless picks for your next order</h4>
+            <p id="recommendationsSummary">A refined set of products selected from what you are browsing now.</p>
+          </div>
+          <div class="recommendations-meta">
+            <article class="recommendations-meta-card">
+              <span>Curated Picks</span>
+              <strong id="recommendationsCount">0 items</strong>
+            </article>
+            <article class="recommendations-meta-card">
+              <span>Vendors</span>
+              <strong id="recommendationsVendorCount">0 sellers</strong>
+            </article>
+            <article class="recommendations-meta-card">
+              <span>Price Range</span>
+              <strong id="recommendationsPriceRange">$0.00 - $0.00</strong>
+            </article>
+          </div>
+        </section>
+        <section id="recommendationsGrid" class="recommendations-grid"></section>
+        <div class="recommendations-footer">
+          <button id="recommendationsDoneBtn" type="button" class="btn-ghost">Continue Browsing</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <main class="content">
     <section id="productsGrid" class="products"></section>
@@ -2004,6 +2221,15 @@
     const profileMenuWrap = document.getElementById('profileMenuWrap');
     const profileMenu = document.getElementById('profileMenu');
     const profileMenuLink = document.getElementById('profileMenuLink');
+    const recommendationsModalBackdrop = document.getElementById('recommendationsModalBackdrop');
+    const closeRecommendationsModalBtn = document.getElementById('closeRecommendationsModalBtn');
+    const recommendationsHeroTitle = document.getElementById('recommendationsHeroTitle');
+    const recommendationsSummary = document.getElementById('recommendationsSummary');
+    const recommendationsCount = document.getElementById('recommendationsCount');
+    const recommendationsVendorCount = document.getElementById('recommendationsVendorCount');
+    const recommendationsPriceRange = document.getElementById('recommendationsPriceRange');
+    const recommendationsGrid = document.getElementById('recommendationsGrid');
+    const recommendationsDoneBtn = document.getElementById('recommendationsDoneBtn');
     const signupNav = document.getElementById('signupNav');
     const loginNav = document.getElementById('loginNav');
     const profileMenuLinks = document.querySelectorAll('[data-profile-feature]');
@@ -2508,6 +2734,92 @@
       }
       accountTaskPanel.style.display = 'block';
       accountTaskPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function closeRecommendationsModal() {
+      recommendationsModalBackdrop.style.display = 'none';
+    }
+
+    function renderRecommendationsModal() {
+      accountTaskPanel.style.display = 'none';
+      closeOrdersModal();
+      closeHelpCenterModal();
+      closeProfileQuickModal();
+      closeSubscribeModal();
+      closePaymentModal();
+      closeLiveChatModal();
+      closePostProductModal();
+
+      const sourceItems = currentRenderedItems.length ? [...currentRenderedItems] : [...products];
+      const recommendationItems = sourceItems.slice(0, 4);
+      const vendors = new Set(recommendationItems.map((item) => item.vendor));
+      const prices = recommendationItems.map((item) => Number(item.price || 0));
+      const searchQuery = globalSearchInput.value.trim();
+      const department = departmentSelect.value;
+
+      recommendationsHeroTitle.textContent = recommendationItems.length
+        ? 'Timeless picks for your next order'
+        : 'Classic recommendations are ready';
+
+      if (searchQuery) {
+        recommendationsSummary.textContent = `Refined from your current search for "${searchQuery}" with a calmer, more focused presentation.`;
+      } else if (department !== 'all') {
+        recommendationsSummary.textContent = `Selected from the ${department} department so recommendations feel curated instead of crowding the page.`;
+      } else {
+        recommendationsSummary.textContent = 'Selected from the current marketplace view and presented in a dedicated classic-style panel.';
+      }
+
+      recommendationsCount.textContent = `${recommendationItems.length} items`;
+      recommendationsVendorCount.textContent = `${vendors.size} sellers`;
+      recommendationsPriceRange.textContent = prices.length
+        ? `$${Math.min(...prices).toFixed(2)} - $${Math.max(...prices).toFixed(2)}`
+        : '$0.00 - $0.00';
+
+      recommendationsGrid.innerHTML = '';
+      recommendationItems.forEach((item, index) => {
+        const card = document.createElement('article');
+        card.className = 'recommendation-card';
+        const isSaved = readListStore('sv-watchlist').includes(item.name);
+        card.innerHTML = `
+          <div class="recommendation-card-head">
+            <div class="recommendation-icon">${item.icon}</div>
+            <span class="recommendation-chip">Pick ${index + 1}</span>
+          </div>
+          <div>
+            <h5>${item.name}</h5>
+            <p>${item.desc}</p>
+          </div>
+          <div class="meta">
+            <span class="price">$${item.price.toFixed(2)}</span>
+            <span class="vendor">${item.vendor}</span>
+          </div>
+          <div class="recommendation-actions">
+            <button type="button" class="small-btn" data-recommendation-view="${item.name}">Quick View</button>
+            <button type="button" class="small-btn ${isSaved ? 'saved' : ''}" data-recommendation-save="${item.name}">${isSaved ? 'Saved' : 'Save'}</button>
+          </div>
+        `;
+        recommendationsGrid.appendChild(card);
+      });
+
+      recommendationsGrid.querySelectorAll('[data-recommendation-view]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const name = btn.getAttribute('data-recommendation-view');
+          addHistoryItem(name);
+          showToast(`${name} added to browsing history.`);
+        });
+      });
+
+      recommendationsGrid.querySelectorAll('[data-recommendation-save]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const name = btn.getAttribute('data-recommendation-save');
+          const added = toggleWatchlistItem(name);
+          btn.classList.toggle('saved', added);
+          btn.textContent = added ? 'Saved' : 'Save';
+          showToast(added ? `${name} saved to watchlist.` : `${name} removed from watchlist.`);
+        });
+      });
+
+      recommendationsModalBackdrop.style.display = 'flex';
     }
 
 
@@ -3235,11 +3547,7 @@
         return;
       }
       if (featureKey === 'recommendations') {
-        departmentSelect.value = 'all';
-        globalSearchInput.value = '';
-        filterProducts();
-        accountTaskPanel.style.display = 'none';
-        showToast('Recommendations refreshed.');
+        renderRecommendationsModal();
         return;
       }
       if (featureKey === 'browsing_history') {
@@ -3496,6 +3804,7 @@
         accountMenu.classList.remove('open');
         profileMenu.classList.remove('open');
         closeOrdersModal();
+        closeRecommendationsModal();
         closeHelpCenterModal();
         closeProfileQuickModal();
         closeSubscribeModal();
@@ -3509,6 +3818,13 @@
     });
 
     closeOrdersModalBtn.addEventListener('click', closeOrdersModal);
+    closeRecommendationsModalBtn.addEventListener('click', closeRecommendationsModal);
+    recommendationsDoneBtn.addEventListener('click', closeRecommendationsModal);
+    recommendationsModalBackdrop.addEventListener('click', (event) => {
+      if (event.target === recommendationsModalBackdrop) {
+        closeRecommendationsModal();
+      }
+    });
     closeHelpCenterModalBtn.addEventListener('click', closeHelpCenterModal);
     helpCenterModalBackdrop.addEventListener('click', (event) => {
       if (event.target === helpCenterModalBackdrop) {
