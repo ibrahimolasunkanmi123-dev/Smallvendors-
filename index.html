@@ -287,20 +287,6 @@
       padding: 0 16px;
     }
 
-    .catalog-header {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 14px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .count { color: var(--muted); font-size: 14px; font-weight: 600; }
-
     .products {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1525,7 +1511,6 @@
       }
 
       .search-wrap { grid-template-columns: 92px 1fr 52px; }
-      .catalog-header { grid-template-columns: 1fr; }
       .feature-modal-body { grid-template-columns: 1fr; }
       .product-form-grid { grid-template-columns: 1fr; }
       .help-center-body { grid-template-columns: 1fr; }
@@ -1635,9 +1620,6 @@
   </section>
 
   <main class="content">
-    <div class="catalog-header">
-      <div id="productCount" class="count">Showing 8 products</div>
-    </div>
     <section id="productsGrid" class="products"></section>
   </main>
 
@@ -2013,7 +1995,6 @@
     ];
 
     const productsGrid = document.getElementById('productsGrid');
-    const productCount = document.getElementById('productCount');
     const globalSearchInput = document.getElementById('globalSearchInput');
     const globalSearchBtn = document.getElementById('globalSearchBtn');
     const departmentSelect = document.getElementById('departmentSelect');
@@ -2483,7 +2464,6 @@
           showToast(added ? `${name} saved to watchlist.` : `${name} removed from watchlist.`);
         });
       });
-      productCount.textContent = `Showing ${items.length} products`;
     }
 
     function filterProducts() {
