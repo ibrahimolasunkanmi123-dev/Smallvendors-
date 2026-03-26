@@ -299,16 +299,6 @@
       margin-bottom: 12px;
     }
 
-    .catalog-search {
-      width: 100%;
-      height: 44px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 0 12px;
-      font-family: inherit;
-      font-size: 14px;
-    }
-
     .count { color: var(--muted); font-size: 14px; font-weight: 600; }
 
     .products {
@@ -1646,8 +1636,7 @@
 
   <main class="content">
     <div class="catalog-header">
-      <input id="homeSearchInput" class="catalog-search" type="text" placeholder="Search products on home page">
-      <div id="productCount" class="count">Showing 0 products</div>
+      <div id="productCount" class="count">Showing 8 products</div>
     </div>
     <section id="productsGrid" class="products"></section>
   </main>
@@ -2025,7 +2014,6 @@
 
     const productsGrid = document.getElementById('productsGrid');
     const productCount = document.getElementById('productCount');
-    const homeSearchInput = document.getElementById('homeSearchInput');
     const globalSearchInput = document.getElementById('globalSearchInput');
     const globalSearchBtn = document.getElementById('globalSearchBtn');
     const departmentSelect = document.getElementById('departmentSelect');
@@ -2499,7 +2487,7 @@
     }
 
     function filterProducts() {
-      const query = homeSearchInput.value.trim().toLowerCase() || globalSearchInput.value.trim().toLowerCase();
+      const query = globalSearchInput.value.trim().toLowerCase();
       const department = departmentSelect.value;
       const filtered = products.filter((item) => {
         const haystack = `${item.name} ${item.desc} ${item.vendor}`.toLowerCase();
@@ -2510,14 +2498,13 @@
       render(filtered);
     }
 
-    homeSearchInput.addEventListener('input', filterProducts);
     globalSearchInput.addEventListener('input', filterProducts);
     departmentSelect.addEventListener('change', () => {
       setPreferredDepartment(departmentSelect.value);
       filterProducts();
     });
     globalSearchBtn.addEventListener('click', () => {
-      saveRecentSearch(globalSearchInput.value || homeSearchInput.value);
+      saveRecentSearch(globalSearchInput.value);
       filterProducts();
     });
 
@@ -3270,7 +3257,6 @@
       }
       if (featureKey === 'recommendations') {
         departmentSelect.value = 'all';
-        homeSearchInput.value = '';
         globalSearchInput.value = '';
         filterProducts();
         openTaskPanel(
@@ -3292,7 +3278,6 @@
       }
       if (featureKey === 'same_day_local') {
         departmentSelect.value = 'all';
-        homeSearchInput.value = '';
         globalSearchInput.value = '';
         filterProducts();
         openTaskPanel(
